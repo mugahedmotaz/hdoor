@@ -97,8 +97,8 @@ const Index = () => {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-start">
           <div className="rounded-2xl border bg-card p-0 overflow-hidden aspect-video anim-in hover-lift">
             <img
-              src="https://images.unsplash.com/photo-1585386959984-a4155223168f?q=80&auto=format&fit=crop&w=1600"
-              alt="هاتف يمسح رمز QR لتسجيل الحضور"
+              src="https://media.gettyimages.com/id/1779070756/photo/two-university-students-walk-down-campus-stairs.jpg?s=612x612&w=0&k=20&c=N7d2_6_aoPReJd9b6fUMG9xWwEj-yX9UG-qjdcIxws0="
+              alt="طلاب جامعيون يتجهون في الحرم الجامعي"
               className="w-full h-full object-cover"
               loading="lazy"
               decoding="async"
