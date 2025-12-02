@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { GraduationCap } from "lucide-react";
+import { Logo } from "@/components/ui/avatar";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -88,12 +89,13 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
       <Card className="w-full max-w-md shadow-elegant">
         <CardHeader className="text-center space-y-2">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mb-2">
+          {/* <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mb-2">
             <GraduationCap className="w-8 h-8 text-primary-foreground" />
-          </div>
+          </div> */}
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             {/* نظام الحضور الذكي */}
           </CardTitle>
+          <Logo size="xl" className="m-auto" />
           <CardDescription>إدارة الحضور بالباركود</CardDescription>
         </CardHeader>
 
@@ -144,7 +146,7 @@ const Auth = () => {
                 <div className="space-y-2">
                   <Label htmlFor="fullname" className="float-right pb-4">الاسم الكامل</Label>
                   <Input
-                   className="text-right"
+                    className="text-right"
                     id="fullname"
                     type="text"
                     placeholder="أحمد محمد"
@@ -199,7 +201,7 @@ const Auth = () => {
                   <RadioGroup value={role} onValueChange={(v) => setRole(v as "student" | "professor")}>
                     <div className="flex items-center space-x-2">
                       <Label htmlFor="student" className=" m-1 cursor-pointer"> طالب</Label>
-                      <RadioGroupItem  value="student" id="student" />
+                      <RadioGroupItem value="student" id="student" />
                     </div>
                     <div className="flex items-center space-x-2 ">
                       <Label htmlFor="professor" className=" m-1 cursor-pointer">أستاذ</Label>

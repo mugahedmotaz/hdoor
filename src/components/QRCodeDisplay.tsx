@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
-import { getQrSecret, getWindowCounter, signPayload } from "@/lib/qr";
 
 interface QRCodeDisplayProps {
  baseData: string;
  refreshIntervalMs?: number; // default 5000
- size?: number; // px, default 320
+ size?: number; // px
 }
 
 // Generates a rotating QR payload every interval window using a simple time window counter
@@ -18,21 +17,8 @@ export default function QRCodeDisplay({ baseData, refreshIntervalMs = 5000, size
 
  const generate = async () => {
   try {
-   const secret = getQrSecret();
-   const windowCounter = getWindowCounter(refreshIntervalMs);
-   let payload: string;
-
-   if (secret) {
-    const sig = await signPayload(baseData, windowCounter, secret);
-    payload = `${baseData}|${windowCounter}|${sig}`;
-   } else {
-    // fallback (غير مُوقّع) إن لم يضبط السر
-    payload = `${baseData}|${windowCounter}`;
-    if (import.meta.env.DEV) {
-     // eslint-disable-next-line no-console
-     console.warn("VITE_QR_SECRET غير مضبوط. الكود سيُولّد بدون توقيع HMAC.");
-    }
-   }
+   const windowCounter = Math.floor(Date.now() / refreshIntervalMs);
+   const payload = `${baseData}|${windowCounter}`;
    const dataUrl = await QRCode.toDataURL(payload, {
     width: size,
     margin: 2,

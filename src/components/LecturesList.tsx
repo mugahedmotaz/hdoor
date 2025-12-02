@@ -9,7 +9,7 @@ import AttendanceHistory from "@/components/AttendanceHistory";
 import QRCodeDisplay from "./QRCodeDisplay";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
-import { QrCode, Users, MapPin, Calendar } from "lucide-react";
+import { QrCode, Users, MapPin, Calendar, Download } from "lucide-react";
 
 interface LecturesListProps {
   userId: string;
@@ -128,6 +128,7 @@ const LecturesList = ({ userId, refreshKey }: LecturesListProps) => {
                   {selectedLecture.course_code}
                 </p>
               </div>
+              <QRCodeDisplay baseData={selectedLecture.qr_code_data} refreshIntervalMs={5000} />
               <QRCodeDisplay baseData={selectedLecture.qr_code_data} refreshIntervalMs={5000} />
             </div>
           )}
