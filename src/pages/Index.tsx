@@ -12,51 +12,58 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between flex-row-reverse">
           <Logo size="lg" />
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate("/auth")}>تسجيل الدخول</Button>
             <Button className="gap-2" onClick={() => navigate("/auth")}>ابدأ مجاناً</Button>
+            <Button variant="ghost" onClick={() => navigate("/auth")}>تسجيل الدخول</Button>
           </div>
         </div>
       </header>
-      {/* Hero Section with gradient background (moved background colors into Hero only) */}
+      {/* Hero Section with layered brand background */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/10 via-secondary/10 to-accent/10" />
-        <div className="container mx-auto px-4 py-20">
-          <div className="max-w-5xl mx-auto text-right space-y-8">
-            <div className="flex items-center justify-end">
-              {/* Logo without text as requested */}
-              <Logo size="xl" />
-            </div>
-            <h1 className="text-4xl md:text-6xl font-black leading-tight">
+        {/* Main gradient backdrop */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/15 via-secondary/10 to-background" />
+
+        {/* Bottom color waves for depth (inside Hero only) */}
+        <div className="pointer-events-none absolute -bottom-10 -start-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl -z-10" />
+        <div className="pointer-events-none absolute -bottom-16 start-24 h-64 w-64 rounded-full bg-secondary/15 blur-3xl -z-10" />
+        <div className="pointer-events-none absolute -bottom-20 end-10 h-80 w-80 rounded-full bg-accent/10 blur-3xl -z-10" />
+
+        {/* Bottom fade to background to anchor the section visually */}
+        <div className="absolute bottom-0 start-0 end-0 h-40 bg-gradient-to-t from-background/80 via-background/40 to-transparent -z-10" />
+
+        <div className="container mx-auto px-4 py-20 md:py-24">
+          <div className="max-w-6xl mx-auto text-right space-y-6 md:space-y-8 flex flex-col ">
+           
+            <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
               بوابة حضور موثوقة للجامعات والمؤسسات التعليمية
             </h1>
-            <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl ms-auto">
+            <p className="text-xl md:text-2xl leading-relaxed text-muted-foreground">
               إدارة احترافية للحضور عبر الباركود وربط كل طالب بجهازه الخاص لمنع التزوير. سريعة، دقيقة، وجاهزة للعمل فوراً.
             </p>
-            <div className="flex flex-wrap items-center justify-end gap-3">
-              <Button size="lg" className="px-8 h-12 text-base gap-2" onClick={() => navigate("/auth")}>
+            <div className="w-full md:w-auto flex flex-wrap items-center  gap-3 md:gap-4">
+              <Button size="lg" className="w-full md:w-auto px-8 h-12 text-base gap-2 md:text-lg" onClick={() => navigate("/auth")}>
                 <QrCode className="w-5 h-5" /> ابدأ الآن
               </Button>
-              <Button size="lg" variant="outline" className="px-8 h-12 text-base" onClick={() => window.scrollTo({ top: 800, behavior: "smooth" })}>
+              <Button size="lg" variant="outline" className="w-full md:w-auto px-8 h-12 text-base md:text-lg" onClick={() => window.scrollTo({ top: 800, behavior: "smooth" })}>
                 استعرض الميزات
               </Button>
             </div>
             {/* Quick stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 text-right">
-              <div className="rounded-2xl border bg-card p-4">
-                <div className="text-3xl font-extrabold">70%</div>
-                <div className="text-xs">توفير في وقت التسجيل</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 text-right  w-full md:w-auto">
+              <div className="rounded-2xl border bg-card p-5 min-h-[96px] flex flex-col justify-center">
+                <div className="text-4xl font-extrabold">70%</div>
+                <div className="text-sm">توفير في وقت التسجيل</div>
               </div>
-              <div className="rounded-2xl border bg-card p-4">
-                <div className="text-3xl font-extrabold">+10k</div>
-                <div className="text-xs">عملية حضور ناجحة</div>
+              <div className="rounded-2xl border bg-card p-5 min-h-[96px] flex flex-col justify-center">
+                <div className="text-4xl font-extrabold">+10k</div>
+                <div className="text-sm">عملية حضور ناجحة</div>
               </div>
-              <div className="rounded-2xl border bg-card p-4">
-                <div className="text-3xl font-extrabold">99.9%</div>
-                <div className="text-xs">دقة موثوقة</div>
+              <div className="rounded-2xl border bg-card p-5 min-h-[96px] flex flex-col justify-center">
+                <div className="text-4xl font-extrabold">99.9%</div>
+                <div className="text-sm">دقة موثوقة</div>
               </div>
-              <div className="rounded-2xl border bg-card p-4">
-                <div className="text-3xl font-extrabold">24/7</div>
-                <div className="text-xs">جاهزية وخدمة</div>
+              <div className="rounded-2xl border bg-card p-5 min-h-[96px] flex flex-col justify-center">
+                <div className="text-4xl font-extrabold">24/7</div>
+                <div className="text-sm">جاهزية وخدمة</div>
               </div>
             </div>
           </div>
@@ -65,7 +72,7 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="p-6 rounded-2xl bg-card border shadow-md hover:shadow-elegant transition-all space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700 text-right">
             <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
               <Zap className="w-6 h-6 text-primary" />
@@ -100,7 +107,7 @@ const Index = () => {
 
       {/* How it works */}
       <section className="container mx-auto px-4 py-12">
-        <div className="text-right mb-8">
+        <div className="text-right mb-8 max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-extrabold">كيف يعمل؟</h2>
           <p className="text-muted-foreground mt-2">ثلاث خطوات بسيطة تنظّم حضور محاضراتك</p>
         </div>
@@ -125,7 +132,7 @@ const Index = () => {
 
       {/* Testimonials / Trust */}
       <section className="container mx-auto px-4 py-12">
-        <div className="rounded-3xl border bg-card p-8 md:p-10 shadow-sm">
+        <div className="rounded-3xl border bg-card p-8 md:p-10 shadow-sm max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6 items-start text-right">
             <div className="space-y-2">
               <div className="text-4xl font-extrabold">+10,000</div>
@@ -146,7 +153,7 @@ const Index = () => {
       {/* CTA band */}
       <section className="relative my-8">
         <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 p-8 md:p-12">
+          <div className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 p-8 md:p-12 max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:flex-row-reverse">
               <div className="text-right space-y-2">
                 <h3 className="text-2xl md:text-3xl font-extrabold">ابدأ رحلتك مع HDOOR الآن</h3>
@@ -165,7 +172,7 @@ const Index = () => {
 
       {/* FAQ */}
       <section className="container mx-auto px-4 py-12">
-        <div className="text-right mb-6">
+        <div className="text-right mb-6 max-w-6xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-extrabold">الأسئلة الشائعة</h2>
         </div>
         <div className="max-w-3xl ms-auto space-y-3">

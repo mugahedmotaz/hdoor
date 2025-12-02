@@ -59,7 +59,7 @@ export function Logo({ className, textClassName, size = "md", showText = false }
     <div className={cn("flex items-center gap-2", className)}>
       {/* Place the logo file at public/logo-hdoor.png */}
       <img
-        src="/Hdoor.png"
+        src="/logo hdoor.jpg"
         alt="HDOOR Logo"
         className={cn("w-auto", sizeMap[size])}
         loading="eager"

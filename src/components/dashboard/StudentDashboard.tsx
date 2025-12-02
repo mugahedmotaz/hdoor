@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import QRScanner from "@/components/QRScanner";
 import AttendanceHistory from "@/components/AttendanceHistory";
 import { QrCode, History } from "lucide-react";
+import { getQrSecret, verifyPayload } from "@/lib/qr";
 
 interface StudentDashboardProps {
   userId: string;
@@ -118,12 +119,33 @@ const StudentDashboard = ({ userId }: StudentDashboardProps) => {
         navigator.userAgent.split("(")[1]?.split(")")[0] || "Unknown Device"
       );
 
-      // Normalize scanned text and support rotating QR format: base|window
+      // Normalize scanned text and support rotating QR format
       const clean = extractQr(qrData);
-      const base = clean.split("|")[0];
+      const parts = clean.split("|");
+      const secret = getQrSecret();
 
-      // Find lecture by base QR code stored with the lecture
-      const lecture = await dataClient.findLectureByQr(base);
+      let base = parts[0];
+      let lecture = null as any;
+
+      if (secret && parts.length >= 3) {
+        // Signed format: base|window|sig
+        const win = Number(parts[1]);
+        const sig = parts[2];
+
+        // allow small drift: current window OR previous window
+        const okCurrent = await verifyPayload(base, win, sig, secret);
+        const okPrev = await verifyPayload(base, win - 1, sig, secret);
+        const valid = okCurrent || okPrev;
+        if (!Number.isFinite(win) || !valid) {
+          toast({ variant: "destructive", title: "خطأ", description: "باركود غير صالح أو منتهي الصلاحية" });
+          return;
+        }
+        lecture = await dataClient.findLectureByQr(base);
+      } else {
+        // Unsigned fallback: use base only
+        base = parts[0];
+        lecture = await dataClient.findLectureByQr(base);
+      }
 
       if (!lecture) {
         toast({
