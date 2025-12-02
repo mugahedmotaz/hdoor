@@ -5,7 +5,6 @@ import { Logo } from "@/components/ui/avatar";
 
 const Index = () => {
   const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Logo */}
@@ -184,10 +183,9 @@ const Index = () => {
           </details>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="border-t bg-card/50 mt-8">
-        {/* <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4"> */}
+        {/* <div className="container mx-auto px-4 py-8 flex flex_col md:flex-row items-center justify-between gap-4"> */}
         {/* <Logo size="md" showText /> */}
         {/* <div className="text-xs text-muted-foreground">© {new Date().getFullYear()} HDOOR. جميع الحقوق محفوظة.</div> */}
         {/* </div> */}

@@ -6,11 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import AttendanceHistory from "@/components/AttendanceHistory";
-import QRCode from "qrcode";
 import QRCodeDisplay from "./QRCodeDisplay";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
-import { QrCode, Users, MapPin, Calendar, Download } from "lucide-react";
+import { QrCode, Users, MapPin, Calendar } from "lucide-react";
 
 interface LecturesListProps {
   userId: string;
@@ -23,7 +22,6 @@ const LecturesList = ({ userId, refreshKey }: LecturesListProps) => {
   const [selectedLecture, setSelectedLecture] = useState<any>(null);
   const [showQR, setShowQR] = useState(false);
   const [showAttendance, setShowAttendance] = useState(false);
-  const [qrCodeUrl, setQrCodeUrl] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -44,19 +42,7 @@ const LecturesList = ({ userId, refreshKey }: LecturesListProps) => {
     setShowQR(true);
   };
 
-  const downloadQRCode = () => {
-    if (!qrCodeUrl || !selectedLecture) return;
-
-    const link = document.createElement("a");
-    link.download = `qr-${selectedLecture.course_code}-${selectedLecture.id}.png`;
-    link.href = qrCodeUrl;
-    link.click();
-
-    toast({
-      title: "تم التحميل",
-      description: "تم تحميل الباركود بنجاح",
-    });
-  };
+  // عرض QR ديناميكي داخل Dialog عبر QRCodeDisplay
 
   const viewAttendance = (lecture: any) => {
     setSelectedLecture(lecture);
