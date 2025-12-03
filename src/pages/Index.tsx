@@ -28,9 +28,9 @@ const Index = () => {
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/15 via-secondary/10 to-background" />
 
         {/* Bottom color waves for depth (inside Hero only) */}
-        <div className="pointer-events-none absolute -bottom-10 -start-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl -z-10 floaty" />
-        <div className="pointer-events-none absolute -bottom-16 start-24 h-64 w-64 rounded-full bg-secondary/15 blur-3xl -z-10 floaty floaty-slow" />
-        <div className="pointer-events-none absolute -bottom-20 end-10 h-80 w-80 rounded-full bg-accent/10 blur-3xl -z-10 floaty floaty-slower" />
+        <div className="pointer-events-none absolute -bottom-10 -start-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl -z-10 floaty"></div>
+        <div className="pointer-events-none absolute -bottom-16 start-24 h-64 w-64 rounded-full bg-secondary/15 blur-3xl -z-10 floaty floaty-slow"></div>
+        <div className="pointer-events-none absolute -bottom-20 end-10 h-80 w-80 rounded-full bg-accent/10 blur-3xl -z-10 floaty floaty-slower"></div>
 
         <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
           <div className="text-center max-w-5xl mx-auto">
