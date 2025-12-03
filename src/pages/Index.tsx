@@ -62,6 +62,11 @@ const Index = () => {
               <MagneticButton
                 onClick={() => navigate("/university-register")}
                 variant="outline"
+                size="lg"
+                className="Arabic text-lg px-8 py-6"
+              >
+                تسجيل جامعة
+              </MagneticButton>
             </div>
           </div>
         </div>
@@ -313,52 +318,50 @@ const Index = () => {
             إلغاء في أي وقت
           </div>
         </div>
-    </div>
-        </div >
-      </section >
+      </ParallaxSection>
 
-  {/* Footer */ }
-  < footer className = "border-t bg-card/50 mt-8" >
-    <div className="container mx-auto px-4 py-10">
-      <div className="grid gap-8 md:grid-cols-4 text-right">
-        <div className="space-y-3">
-          <Logo size="md" />
-          <p className="text-sm text-muted-foreground">
-            نظام عربي موثوق لإدارة حضور المحاضرات عبر باركود متجدد وربط جهاز واحد لكل مستخدم.
-          </p>
+      {/* Footer */}
+      <footer className="border-t bg-card/50 mt-8">
+        <div className="container mx-auto px-4 py-10">
+          <div className="grid gap-8 md:grid-cols-4 text-right">
+            <div className="space-y-3">
+              <Logo size="md" />
+              <p className="text-sm text-muted-foreground">
+                نظام عربي موثوق لإدارة حضور المحاضرات عبر باركود متجدد وربط جهاز واحد لكل مستخدم.
+              </p>
+            </div>
+            <div>
+              <h5 className="font-bold mb-3">المنتج</h5>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">الميزات</a></li>
+                <li><a href="#" className="hover:text-foreground">كيف يعمل</a></li>
+                <li><a href="#" className="hover:text-foreground">التسعير</a></li>
+              </ul>
+            </div>
+            <div>
+              <h5 className="font-bold mb-3">الموارد</h5>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">الأسئلة الشائعة</a></li>
+                <li><a href="#" className="hover:text-foreground">التكاملات</a></li>
+                <li><a href="#" className="hover:text-foreground">خارطة الطريق</a></li>
+              </ul>
+            </div>
+            <div>
+              <h5 className="font-bold mb-3">الدعم والقانوني</h5>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">تواصل معنا</a></li>
+                <li><a href="#" className="hover:text-foreground">سياسة الخصوصية</a></li>
+                <li><a href="#" className="hover:text-foreground">الشروط والأحكام</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-8 pt-6 border-t text-xs text-muted-foreground flex items-center justify-between flex-row-reverse">
+            <div>  2025 HDOOR. جميع الحقوق محفوظة.  تم تطويره بواسطة <a className="font-bold" href="#">Mugahed motaz</a></div>
+            <div className="hidden md:block">مبني بخبرة وتجربة لتقديم أفضل أداء وتجربة عربية.</div>
+          </div>
         </div>
-        <div>
-          <h5 className="font-bold mb-3">المنتج</h5>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#" className="hover:text-foreground">الميزات</a></li>
-            <li><a href="#" className="hover:text-foreground">كيف يعمل</a></li>
-            <li><a href="#" className="hover:text-foreground">التسعير</a></li>
-          </ul>
-        </div>
-        <div>
-          <h5 className="font-bold mb-3">الموارد</h5>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#" className="hover:text-foreground">الأسئلة الشائعة</a></li>
-            <li><a href="#" className="hover:text-foreground">التكاملات</a></li>
-            <li><a href="#" className="hover:text-foreground">خارطة الطريق</a></li>
-          </ul>
-        </div>
-        <div>
-          <h5 className="font-bold mb-3">الدعم والقانوني</h5>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#" className="hover:text-foreground">تواصل معنا</a></li>
-            <li><a href="#" className="hover:text-foreground">سياسة الخصوصية</a></li>
-            <li><a href="#" className="hover:text-foreground">الشروط والأحكام</a></li>
-          </ul>
-        </div>
-      </div>
-      <div className="mt-8 pt-6 border-t text-xs text-muted-foreground flex items-center justify-between flex-row-reverse">
-        <div>  2025 HDOOR. جميع الحقوق محفوظة.  تم تطويره بواسطة <a className="font-bold" href="#">Mugahed motaz</a></div>
-        <div className="hidden md:block">مبني بخبرة وتجربة لتقديم أفضل أداء وتجربة عربية.</div>
-      </div>
+      </footer>
     </div>
-      </footer >
-    </div >
   );
 };
 
