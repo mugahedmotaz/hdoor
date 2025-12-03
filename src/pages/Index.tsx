@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GraduationCap, QrCode, Shield, Zap, Star, ArrowRight, Menu, X, TrendingUp, Users, Award, CheckCircle } from "lucide-react";
 import Header from "@/components/Header";
 import { Logo } from "@/components/ui/avatar";
@@ -17,20 +17,110 @@ import ParallaxSection from "@/components/ParallaxSection";
 const Index = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const observerRef = useRef();
+
+  // Performance optimization for scroll animations
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const handleIntersect = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          
+          // Animate counters
+          if (entry.target.classList.contains('counter')) {
+            const target = parseFloat(entry.target.dataset.target);
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const updateCounter = () => {
+              current += increment;
+              if (current < target) {
+                entry.target.textContent = target % 1 === 0 ? Math.floor(current).toLocaleString() : current.toFixed(1);
+                requestAnimationFrame(updateCounter);
+              } else {
+                entry.target.textContent = target % 1 === 0 ? target.toLocaleString() : target.toFixed(1);
+                if (target % 1 === 0) entry.target.textContent += '+';
+                else entry.target.textContent += '%';
+              }
+            };
+            
+            updateCounter();
+          }
+        }
+      });
+    };
+
+    observerRef.current = new IntersectionObserver(handleIntersect, observerOptions);
+    
+    // Delay observing to ensure DOM is ready
+    setTimeout(() => {
+      const elements = document.querySelectorAll('.scroll-reveal, .counter');
+      elements.forEach(el => observerRef.current.observe(el));
+    }, 100);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background relative">
+      <style jsx>{`
+        .scroll-reveal {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: all 0.6s ease-out;
+        }
+        .scroll-reveal.animate-in {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .counter {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.5s ease-out;
+        }
+        .counter.animate-in {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        @keyframes gradient-shift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-gradient-shift {
+          background-size: 200% 200%;
+          animation: gradient-shift 8s ease infinite;
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 0.8; }
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+      `}</style>
       <ParticleBackground />
       <FloatingElements />
       <Header showAuthButtons={true} />
       {/* Hero Section with layered brand background */}
       <ParallaxSection className="relative overflow-hidden">
         {/* Main gradient backdrop */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/15 via-secondary/10 to-background" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/20 via-secondary/15 to-accent/20 animate-gradient-shift" />
 
         {/* Bottom color waves for depth (inside Hero only) */}
-        <div className="pointer-events-none absolute -bottom-10 -start-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl -z-10 floaty"></div>
-        <div className="pointer-events-none absolute -bottom-16 start-24 h-64 w-64 rounded-full bg-secondary/15 blur-3xl -z-10 floaty floaty-slow"></div>
-        <div className="pointer-events-none absolute -bottom-20 end-10 h-80 w-80 rounded-full bg-accent/10 blur-3xl -z-10 floaty floaty-slower"></div>
+        <div className="pointer-events-none absolute -bottom-10 -start-24 h-72 w-72 rounded-full bg-gradient-to-r from-primary/40 to-primary/20 blur-3xl -z-10 floaty animate-pulse-slow" />
+        <div className="pointer-events-none absolute -bottom-16 start-24 h-64 w-64 rounded-full bg-gradient-to-r from-secondary/40 to-secondary/20 blur-3xl -z-10 floaty floaty-slow animate-pulse-slow" />
+        <div className="pointer-events-none absolute -bottom-20 end-10 h-80 w-80 rounded-full bg-gradient-to-r from-accent/35 to-accent/15 blur-3xl -z-10 floaty floaty-slower animate-pulse-slow" />
 
         <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
           <div className="text-center max-w-5xl mx-auto">
@@ -41,20 +131,20 @@ const Index = () => {
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent anim-in">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent anim-in scroll-reveal leading-tight tracking-tight">
               نظام HDOOR
               <br />
-              <span className="text-4xl md:text-6xl">للحضور الذكي</span>
+              <span className="text-3xl md:text-4xl">للحضور الذكي</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed anim-in anim-delay-1">
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed anim-in anim-delay-1 scroll-reveal font-medium px-4 sm:px-0">
               نظام متطور لإدارة الحضور باستخدام الباركود الديناميكي، مصمم خصيصاً للمؤسسات التعليمية في العالم العربي
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center anim-in anim-delay-2">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center anim-in anim-delay-2 scroll-reveal px-4 sm:px-0">
               <MagneticButton
                 onClick={() => navigate("/auth")}
-                className="Arabic text-lg px-8 py-6"
+                className="Arabic text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 w-full sm:w-auto"
                 size="lg"
               >
                 ابدأ مجاناً
@@ -63,7 +153,7 @@ const Index = () => {
                 onClick={() => navigate("/university-register")}
                 variant="outline"
                 size="lg"
-                className="Arabic text-lg px-8 py-6"
+                className="Arabic text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 w-full sm:w-auto"
               >
                 تسجيل جامعة
               </MagneticButton>
@@ -73,194 +163,254 @@ const Index = () => {
       </ParallaxSection>
 
       {/* Product showcase */}
-      < section id="product" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28" >
+      <section id="product" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-start">
-          <div className="rounded-2xl border bg-card p-0 overflow-hidden aspect-video anim-in hover-lift">
+          <div className="rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg p-0 overflow-hidden aspect-video anim-in hover-lift scroll-reveal relative">
+            <div className="absolute inset-0 bg-gray-200 animate-pulse" />
             <img
-              src="https://media.gettyimages.com/id/1779070756/photo/two-university-students-walk-down-campus-stairs.jpg?s=612x612&w=0&k=20&c=N7d2_6_aoPReJd9b6fUMG9xWwEj-yX9UG-qjdcIxws0=" alt="طلاب جامعيون يتجهون في الحرم الجامعي"
-              className="w-full h-full object-cover"
+              src="https://media.gettyimages.com/id/1779070756/photo/two-university-students-walk-down-campus-stairs.jpg?s=612x612&w=0&k=20&c=N7d2_6_aoPReJd9b6fUMG9xWwEj-yX9UG-qjdcIxws0="
+              alt="طلاب جامعيون يتجهون في الحرم الجامعي"
+              className="w-full h-full object-cover relative z-10"
               loading="lazy"
               decoding="async"
+              onLoad={(e) => e.target.previousElementSibling.style.display = 'none'}
             />
           </div>
-          <div className="space-y-3 text-right anim-in anim-delay-1">
-            <h2 className="text-3xl md:text-4xl font-extrabold">لمحة سريعة عن النظام</h2>
-            <p className="text-muted-foreground font-bold pb-4">إنشاء المحاضرات، توليد باركود متجدد، مسح سريع من جهاز الطالب المسجّل، وتسجيل فوري للحضور.</p>
+          <div className="space-y-3 text-right anim-in anim-delay-1 scroll-reveal">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-6 leading-tight tracking-tight">لمحة سريعة عن النظام</h2>
+            <p className="text-muted-foreground font-bold pb-4 leading-relaxed text-lg">إنشاء المحاضرات، توليد باركود متجدد، مسح سريع من جهاز الطالب المسجّل، وتسجيل فوري للحضور.</p>
             <ul className="space-y-2 text-sm">
-              <li className="flex items-center  gap-2"><Zap className="w-4 h-4 text-primary" /><span>سرعة في الإعداد والعمل</span></li>
-              <li className="flex items-center  gap-2"><Shield className="w-4 h-4 text-secondary" /><span>أمان وربط جهاز واحد لكل مستخدم</span></li>
-              <li className="flex items-center  gap-2"><QrCode className="w-4 h-4 text-accent" /><span>باركود ديناميكي متجدد كل 5 ثوانٍ</span></li>
+              <li className="flex items-center  gap-2"><Zap className="w-4 h-4 text-primary" /><span className="font-medium text-base">سرعة في الإعداد والعمل</span></li>
+              <li className="flex items-center  gap-2"><Shield className="w-4 h-4 text-secondary" /><span className="font-medium text-base">أمان وربط جهاز واحد لكل مستخدم</span></li>
+              <li className="flex items-center  gap-2"><QrCode className="w-4 h-4 text-accent" /><span className="font-medium text-base">باركود ديناميكي متجدد كل 5 ثوانٍ</span></li>
             </ul>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Why us */}
-      < section id="why" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28" >
+      <section id="why" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6 text-right">
-          <div className="p-6 rounded-2xl border bg-card space-y-2 transition-all hover:shadow-lg hover:-translate-y-0.5">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg space-y-2 transition-all hover:shadow-xl hover:-translate-y-0.5">
             <Zap className="w-6 h-6 text-primary" />
             <h3 className="font-bold">سرعة ومرونة</h3>
             <p className="text-sm text-muted-foreground">انطلق خلال دقائق بواجهة عربية RTL محسّنة.</p>
           </div>
-          <div className="p-6 rounded-2xl border bg-card space-y-2 transition-all hover:shadow-lg hover:-translate-y-0.5">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg space-y-2 transition-all hover:shadow-xl hover:-translate-y-0.5">
             <Shield className="w-6 h-6 text-secondary" />
             <h3 className="font-bold">أمان موثوق</h3>
             <p className="text-sm text-muted-foreground">منع الانتحال بربط جهاز واحد ديناميكيًا.</p>
           </div>
-          <div className="p-6 rounded-2xl border bg-card space-y-2 transition-all hover:shadow-lg hover:-translate-y-0.5">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg space-y-2 transition-all hover:shadow-xl hover:-translate-y-0.5">
             <QrCode className="w-6 h-6 text-accent" />
             <h3 className="font-bold">باركود متجدد</h3>
             <p className="text-sm text-muted-foreground">تحديث كل 5 ثوانٍ لزيادة الموثوقية.</p>
           </div>
         </div>
-      </section >
+      </section>
 
 
 
       {/* Integrations / Roadmap */}
-      < section className="container mx-auto px-4 py-12" >
+      <section className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6 text-right">
-          <div className="p-6 rounded-2xl border bg-card space-y-2">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg space-y-2">
             <h3 className="font-bold">تكاملات</h3>
             <p className="text-sm text-muted-foreground">CSV/Excel، تصدير تقارير، وربط لاحقًا مع Google Sheets.</p>
           </div>
-          <div className="p-6 rounded-2xl border bg-card space-y-2">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg space-y-2">
             <h3 className="font-bold">الأمان</h3>
             <p className="text-sm text-muted-foreground">ربط جهاز واحد فعّال، وضبط صلاحيات، وتدقيق سجلات.</p>
           </div>
-          <div className="p-6 rounded-2xl border bg-card space-y-2">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg space-y-2">
             <h3 className="font-bold">خارطة الطريق</h3>
             <p className="text-sm text-muted-foreground">تقارير متقدمة، تطبيق جوّال، ولوحة تحكم للإداريين.</p>
           </div>
         </div>
-      </section >
+      </section>
 
 
 
       {/* How it works */}
-      < section id="how" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28" >
+      <section id="how" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className="text-right mb-8 max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-extrabold">كيف يعمل؟</h2>
           <p className="text-muted-foreground mt-2">ثلاث خطوات بسيطة تنظّم حضور محاضراتك</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <div className="p-6 rounded-2xl border bg-card hover:shadow-elegant transition-all text-right">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg hover:shadow-elegant transition-all text-right">
             <div className="text-sm text-muted-foreground mb-2">الخطوة 1</div>
             <h4 className="font-bold mb-2 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary" /> أنشئ محاضرتك</h4>
             <p className="text-muted-foreground">يقوم الأستاذ بإنشاء محاضرة وتوليد باركود خاص به في ثوانٍ.</p>
           </div>
-          <div className="p-6 rounded-2xl border bg-card hover:shadow-elegant transition-all">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg hover:shadow-elegant transition-all">
             <div className="text-sm text-muted-foreground mb-2">الخطوة 2</div>
             <h4 className="font-bold mb-2 flex items-center gap-2"><QrCode className="w-5 h-5 text-secondary" /> امسح الباركود</h4>
             <p className="text-muted-foreground">يقوم الطالب بمسح الباركود من جهازه المسجّل فقط لضمان الموثوقية.</p>
           </div>
-          <div className="p-6 rounded-2xl border bg-card hover:shadow-elegant transition-all">
+          <div className="p-6 rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg hover:shadow-elegant transition-all">
             <div className="text-sm text-muted-foreground mb-2">الخطوة 3</div>
             <h4 className="font-bold mb-2 flex items-center gap-2"><Shield className="w-5 h-5 text-accent" /> تسجيل تلقائي</h4>
             <p className="text-muted-foreground">تسجيل الحضور فورياً مع سجل تفصيلي يمكن مراجعته لاحقاً.</p>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Testimonials / Trust */}
-      < section className="container mx-auto px-4 py-12" >
-        <div className="rounded-3xl border bg-card p-8 md:p-10 shadow-sm max-w-6xl mx-auto">
+      <section className="container mx-auto px-4 py-12">
+        <div className="rounded-3xl border bg-white/95 backdrop-blur-sm shadow-lg p-8 md:p-10 max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6 items-start text-right">
             <div className="space-y-2">
-              <div className="text-4xl font-extrabold">+10,000</div>
+              <div className="text-4xl font-extrabold counter" data-target="10000">0</div>
               <div className="text-sm text-muted-foreground">عمليات حضور ناجحة عبر النظام</div>
             </div>
             <div className="space-y-2">
-              <div className="text-4xl font-extrabold">99.9%</div>
+              <div className="text-4xl font-extrabold counter" data-target="99.9">0</div>
               <div className="text-sm text-muted-foreground">دقة مع ربط الجهاز لمنع الانتحال</div>
             </div>
             <div className="space-y-2">
-              <div className="text-4xl font-extrabold">70%</div>
+              <div className="text-4xl font-extrabold counter" data-target="70">0</div>
               <div className="text-sm text-muted-foreground">توفير بالوقت مقارنة بالتسجيل التقليدي</div>
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* CTA band */}
-      < section className="relative my-8" >
+      <section className="relative my-8">
         <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 p-8 md:p-12 max-w-6xl mx-auto">
+          <div className="relative overflow-hidden rounded-3xl border bg-white/95 backdrop-blur-sm shadow-lg p-8 md:p-12 max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:flex-row-reverse">
               <div className="text-right space-y-2 ">
                 <h3 className="text-2xl md:text-2xl font-extrabold">ابدأ رحلتك مع  hdoor الآن</h3>
                 <p className="text-muted-foreground">تجربة مريحة وآمنة لإدارة حضور المحاضرات</p>
               </div>
               <div className="flex gap-3">
-                <Button size="lg" className="gap-2" onClick={() => navigate("/auth")}>
+                <Button size="lg" className="gap-2 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl" onClick={() => navigate("/auth")}>
                   <QrCode className="w-5 h-5" /> جرّبه مجاناً
                 </Button>
-                <Button size="lg" variant="outline" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>تعرف أكثر</Button>
+                <Button size="lg" variant="outline" className="hover:scale-105 active:scale-95 transition-all duration-200 border-2 hover:border-primary/50" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>تعرف أكثر</Button>
               </div>
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* FAQ */}
-      < section id="faq" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28" >
+      <section id="faq" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className=" text-right mb-6 max-w-6xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-extrabold">الأسئلة الشائعة</h2>
         </div>
         <div className="max-w-3xl m-auto  space-y-3 text-right">
-          <details className="rounded-xl border bg-card p-4">
+          <details className="rounded-xl border bg-white/95 backdrop-blur-sm shadow-md p-4">
             <summary className="cursor-pointer font-semibold">هل يعمل النظام بدون إنترنت؟</summary>
             <p className="mt-2 text-sm text-muted-foreground">المسح والتسجيل يتطلبان اتصالاً، لكن عرض الباركود يمكن أن يعمل في اتصال ضعيف.</p>
           </details>
-          <details className="rounded-xl border bg-card p-4">
+          <details className="rounded-xl border bg-white/95 backdrop-blur-sm shadow-md p-4">
             <summary className="cursor-pointer font-semibold">كيف يتم منع الانتحال؟</summary>
             <p className="mt-2 text-sm text-muted-foreground">نربط كل حساب بجهاز واحد فعّال فقط، ونحدّث الباركود دوريًا لمنع النسخ.</p>
           </details>
-          <details className="rounded-xl border bg-card p-4">
+          <details className="rounded-xl border bg-white/95 backdrop-blur-sm shadow-md p-4">
             <summary className="cursor-pointer font-semibold">هل يمكن استخراج تقارير؟</summary>
             <p className="mt-2 text-sm text-muted-foreground">نعم، تتوفر سجلات حضور قابلة للمراجعة والتصدير لاحقًا كـ CSV/Excel.</p>
           </details>
-          <details className="rounded-xl border bg-card p-4">
+          <details className="rounded-xl border bg-white/95 backdrop-blur-sm shadow-md p-4">
             <summary className="cursor-pointer font-semibold">هل يدعم RTL واللغة العربية؟</summary>
             <p className="mt-2 text-sm text-muted-foreground">نعم، الواجهة بالكامل RTL مع خط عربي احترافي.</p>
           </details>
-          <details className="rounded-xl border bg-card p-4">
+          <details className="rounded-xl border bg-white/95 backdrop-blur-sm shadow-md p-4">
             <summary className="cursor-pointer font-semibold">هل هناك قيود على الأجهزة؟</summary>
             <p className="mt-2 text-sm text-muted-foreground">يُسمح بجهاز فعّال واحد لكل حساب لمنع الدخول المتعدد.</p>
           </details>
-          <details className="rounded-xl border bg-card p-4">
+          <details className="rounded-xl border bg-white/95 backdrop-blur-sm shadow-md p-4">
             <summary className="cursor-pointer font-semibold">ما هي خطة التسعير المناسبة؟</summary>
             <p className="mt-2 text-sm text-muted-foreground">ابدأ بالتجريبي، ثم الأساسي للأقسام، والمؤسسي للجامعات الكبيرة.</p>
           </details>
         </div>
-      </section >
+      </section>
 
       {/* Contact */}
-      < section className="container mx-auto px-4 py-12" >
-        <div className="max-w-3xl m-auto  rounded-2xl border bg-card p-6 text-right">
+      <section className="container mx-auto px-4 py-12">
+        <div className="max-w-3xl m-auto  rounded-2xl border bg-white/95 backdrop-blur-sm shadow-lg p-6 text-right">
           <h2 className="text-2xl font-extrabold mb-4">تواصل معنا</h2>
           <form className="grid gap-4 text-right">
-            <input className="rounded-md border bg-background p-3" placeholder="الاسم" />
-            <input className="rounded-md border bg-background p-3" placeholder="البريد الإلكتروني" />
-            <textarea className="rounded-md border bg-background p-3" rows={4} placeholder="رسالتك" />
+            <input className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="الاسم" required />
+            <input className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="البريد الإلكتروني" type="email" required />
+            <textarea className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" rows={4} placeholder="رسالتك" required />
             <div className="flex justify-start">
-              <Button className="gap-2">إرسال</Button>
+              <Button className="gap-2 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl">إرسال</Button>
             </div>
           </form>
         </div>
-      </section >
+      </section>
 
       <LiveCounter />
       <InteractiveDemo />
       <FeatureShowcase />
       <TrustBadges />
 
+      {/* Social Proof - Universities */}
+      <section className="py-16 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-4xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">جامعات تثق بنظام HDOOR</h2>
+            <p className="text-lg text-muted-foreground">انضم إلى المؤسسات التعليمية الرائدة التي تستخدم منصتنا</p>
+          </div>
+          
+          {/* Trust Statistics */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            <div className="text-center bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md scroll-reveal">
+              <div className="text-3xl font-extrabold text-primary counter" data-target="50">0</div>
+              <div className="text-sm text-muted-foreground mt-2">جامعة شريكة</div>
+            </div>
+            <div className="text-center bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md scroll-reveal">
+              <div className="text-3xl font-extrabold text-secondary counter" data-target="200">0</div>
+              <div className="text-sm text-muted-foreground mt-2">كلية متصلة</div>
+            </div>
+            <div className="text-center bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md scroll-reveal">
+              <div className="text-3xl font-extrabold text-accent counter" data-target="500">0</div>
+              <div className="text-sm text-muted-foreground mt-2">قسم فعال</div>
+            </div>
+            <div className="text-center bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md scroll-reveal">
+              <div className="text-3xl font-extrabold text-primary counter" data-target="98">0</div>
+              <div className="text-sm text-muted-foreground mt-2">% نسبة الرضا</div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center justify-items-center">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="text-2xl font-bold text-primary">KFUPM</div>
+              <div className="text-xs text-muted-foreground mt-1">جامعة الملك فهد</div>
+            </div>
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="text-2xl font-bold text-secondary">KAU</div>
+              <div className="text-xs text-muted-foreground mt-1">جامعة الملك عبدالعزيز</div>
+            </div>
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="text-2xl font-bold text-accent">KSU</div>
+              <div className="text-xs text-muted-foreground mt-1">جامعة الملك سعود</div>
+            </div>
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="text-2xl font-bold text-primary">AAU</div>
+              <div className="text-xs text-muted-foreground mt-1">الجامعة العربية</div>
+            </div>
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="text-2xl font-bold text-secondary">PSUT</div>
+              <div className="text-xs text-muted-foreground mt-1">جامعة الأميرة سمية</div>
+            </div>
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="text-2xl font-bold text-accent">JU</div>
+              <div className="text-xs text-muted-foreground mt-1">جامعة اليرموك</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Video Testimonials */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-4xl mx-auto mb-16">
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-6 gradient-text">
+          <div className="text-center max-w-4xl mx-auto mb-20">
+            <h2 className="text-3xl md:text-3xl font-extrabold  py-6 gradient-text">
               قصص نجاح من جامعاتكم
             </h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
@@ -301,27 +451,31 @@ const Index = () => {
       </section>
 
       {/* Enhanced CTA Section */}
-      <ParallaxSection className="container mx-auto px-4 py-24 md:py-32 relative z-10">
-        <div className="text-center max-w-5xl mx-auto">
-          <div className="mb-8 anim-in">
-            <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-2 mb-6">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              <span className="text-primary font-semibold">نظام الحضور الذكي</span>
+      <section className="relative my-20 bg-gradient-to-br from-primary/8 via-secondary/8 to-accent/8 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-32 md:py-40 min-h-[400px] flex items-center">
+          <div className="text-center max-w-5xl mx-auto w-full">
+            <div className="mb-12 anim-in">
+              <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-6 py-3 mb-8">
+                <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                <span className="text-primary font-semibold text-lg">نظام الحضور الذكي</span>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 bg-white/95 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                <span className="font-medium">دعم فني 24/7</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                <span className="font-medium">إلغاء في أي وقت</span>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-500" />
-            دعم فني 24/7
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-500" />
-            إلغاء في أي وقت
-          </div>
         </div>
-      </ParallaxSection>
+      </section>
 
       {/* Footer */}
-      <footer className="border-t bg-card/50 mt-8">
+      <footer className="border-t bg-white/95 backdrop-blur-sm mt-8">
         <div className="container mx-auto px-4 py-10">
           <div className="grid gap-8 md:grid-cols-4 text-right">
             <div className="space-y-3">
