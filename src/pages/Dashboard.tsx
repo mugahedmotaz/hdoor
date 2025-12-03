@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import StudentDashboard from "@/components/dashboard/StudentDashboard";
 import ProfessorDashboard from "@/components/dashboard/ProfessorDashboard";
+import UniversityDashboard from "@/components/UniversityDashboard";
 import { LogOut, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/avatar";
 
@@ -23,7 +24,7 @@ const Dashboard = () => {
     try {
       const { data: { session } } = await dataClient.getSession();
 
-      if (!session) {
+      if (!session || !session.user) {
         navigate("/auth");
         return;
       }
@@ -78,6 +79,7 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8">
         {userRole === "student" && userId && <StudentDashboard userId={userId} />}
         {userRole === "professor" && userId && <ProfessorDashboard userId={userId} />}
+        {userRole === "admin" && userId && <UniversityDashboard universityId={userId} adminId={userId} />}
       </main>
     </div>
   );

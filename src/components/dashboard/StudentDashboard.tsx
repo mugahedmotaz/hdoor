@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import QRScanner from "@/components/QRScanner";
+import ProfessionalQRScanner from "@/components/ProfessionalQRScanner";
 import AttendanceHistory from "@/components/AttendanceHistory";
 import { QrCode, History } from "lucide-react";
 
@@ -118,18 +119,15 @@ const StudentDashboard = ({ userId }: StudentDashboardProps) => {
         navigator.userAgent.split("(")[1]?.split(")")[0] || "Unknown Device"
       );
 
-      // Normalize scanned text and support rotating QR format: base|window
-      const clean = extractQr(qrData);
-      const base = clean.split("|")[0];
-
-      // Find lecture by base QR code stored with the lecture
-      const lecture = await dataClient.findLectureByQr(base);
+      // For professional QR scanner, the verification is done in the scanner component
+      // Here we receive the verified lectureId directly
+      const lecture = await dataClient.getLectureById(qrData);
 
       if (!lecture) {
         toast({
           variant: "destructive",
           title: "خطأ",
-          description: "باركود غير صالح أو منتهي الصلاحية",
+          description: "المحاضرة غير موجودة",
         });
         return;
       }
@@ -139,8 +137,9 @@ const StudentDashboard = ({ userId }: StudentDashboardProps) => {
       const already = existingList?.find((r: any) => r.lecture_id === lecture.id);
       if (already) {
         toast({
-          title: "تنبيه",
-          description: "لقد سجلت حضورك لهذه المحاضرة مسبقاً",
+          variant: "destructive",
+          title: "مسجل بالفعل",
+          description: "لقد قمت بتسجيل حضورك في هذه المحاضرة مسبقاً",
         });
         return;
       }
@@ -149,12 +148,13 @@ const StudentDashboard = ({ userId }: StudentDashboardProps) => {
       await dataClient.insertAttendance({
         lecture_id: lecture.id,
         student_id: userId,
+        professor_id: lecture.professor_id,
         device_fingerprint: deviceFingerprint,
       });
 
       toast({
-        title: "تم تسجيل الحضور!",
-        description: `${lecture.course_code} - ${lecture.title}`,
+        title: "تم تسجيل الحضور بنجاح",
+        description: `تم تسجيل حضورك في محاضرة: ${lecture.title}`,
       });
 
       setShowScanner(false);
@@ -194,7 +194,17 @@ const StudentDashboard = ({ userId }: StudentDashboardProps) => {
               </div>
             ) : showScanner ? (
               <div className="space-y-4">
-                <QRScanner onScanResult={handleScanResult} />
+                <ProfessionalQRScanner
+                  onScanSuccess={handleScanResult}
+                  onError={(error) => {
+                    toast({
+                      variant: "destructive",
+                      title: "خطأ في المسح",
+                      description: error,
+                    });
+                  }}
+                  professorId={userId}
+                />
                 <Button
                   variant="outline"
                   onClick={() => setShowScanner(false)}

@@ -111,6 +111,13 @@ All colors MUST be HSL.
   }
 }
 
+/* Smooth section navigation */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 /* Direction-aware defaults */
 @layer base {
   html[dir="rtl"] body {

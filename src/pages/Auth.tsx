@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { GraduationCap } from "lucide-react";
 import { Logo } from "@/components/ui/avatar";
+import { Mail, Lock, User, Eye, EyeOff, LogIn, UserPlus, AlertCircle } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [universityId, setUniversityId] = useState("");
-  const [role, setRole] = useState<"student" | "professor">("student");
+  const [role, setRole] = useState<"student">("student");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -96,7 +96,7 @@ const Auth = () => {
             {/* نظام الحضور الذكي */}
           </CardTitle>
           <Logo size="xl" className="m-auto" />
-          <CardDescription>إدارة الحضور بالباركود</CardDescription>
+          <CardDescription>تسجيل الطلاب فقط | الأساتذة يتم إضافتهم عبر إدارة الجامعة</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -139,6 +139,11 @@ const Auth = () => {
                   {loading ? "جاري التحميل..." : "دخول"}
                 </Button>
               </form>
+              <div className="text-center">
+                <Button variant="link" onClick={() => navigate("/forgot-password")}>
+                  نسيت كلمة المرور؟
+                </Button>
+              </div>
             </TabsContent>
 
             <TabsContent value="signup">
@@ -196,21 +201,8 @@ const Auth = () => {
                     dir="ltr"
                   />
                 </div>
-                <div className="space-y-2 float-right">
-                  <Label >نوع الحساب</Label>
-                  <RadioGroup value={role} onValueChange={(v) => setRole(v as "student" | "professor")}>
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="student" className=" m-1 cursor-pointer"> طالب</Label>
-                      <RadioGroupItem value="student" id="student" />
-                    </div>
-                    <div className="flex items-center space-x-2 ">
-                      <Label htmlFor="professor" className=" m-1 cursor-pointer">أستاذ</Label>
-                      <RadioGroupItem value="professor" id="professor" />
-                    </div>
-                  </RadioGroup>
-                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "جاري التسجيل..." : "إنشاء حساب"}
+                  {loading ? "جاري التسجيل..." : "إنشاء حساب طالب"}
                 </Button>
               </form>
             </TabsContent>

@@ -15,6 +15,7 @@ const Index = () => {
           <Logo size="lg" />
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center gap-3">
+            <Button variant="outline" onClick={() => navigate("/university-register")}>تسجيل جامعة</Button>
             <Button className="gap-2" onClick={() => navigate("/auth")}>ابدأ مجاناً</Button>
             <Button variant="ghost" onClick={() => navigate("/auth")}>تسجيل الدخول</Button>
           </div>
@@ -33,6 +34,7 @@ const Index = () => {
         {mobileOpen && (
           <div className="md:hidden border-t bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/75">
             <div className="container mx-auto px-4 py-3 flex flex-col gap-2">
+              <Button variant="outline" className="w-full" onClick={() => { setMobileOpen(false); navigate("/university-register"); }}>تسجيل جامعة</Button>
               <Button className="w-full" onClick={() => { setMobileOpen(false); navigate("/auth"); }}>ابدأ مجاناً</Button>
               <Button variant="ghost" className="w-full" onClick={() => { setMobileOpen(false); navigate("/auth"); }}>تسجيل الدخول</Button>
             </div>
@@ -65,7 +67,7 @@ const Index = () => {
               <Button size="lg" className="w-full md:w-auto px-8 h-12 text-base gap-2 md:text-lg" onClick={() => navigate("/auth")}>
                 <QrCode className="w-5 h-5" /> ابدأ الآن
               </Button>
-              <Button size="lg" variant="outline" className="w-full md:w-auto px-8 h-12 text-base md:text-lg" onClick={() => window.scrollTo({ top: 800, behavior: "smooth" })}>
+              <Button size="lg" variant="outline" className="w-full md:w-auto px-8 h-12 text-base md:text-lg" onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
                 استعرض الميزات
               </Button>
             </div>
@@ -93,7 +95,7 @@ const Index = () => {
       </section>
 
       {/* Product showcase */}
-      <section className="container mx-auto px-4 py-12">
+      <section id="product" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-start">
           <div className="rounded-2xl border bg-card p-0 overflow-hidden aspect-video anim-in hover-lift">
             <img
@@ -117,7 +119,7 @@ const Index = () => {
       </section>
 
       {/* Why us */}
-      <section className="container mx-auto px-4 py-12">
+      <section id="why" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6 text-right">
           <div className="p-6 rounded-2xl border bg-card space-y-2 transition-all hover:shadow-lg hover:-translate-y-0.5">
             <Zap className="w-6 h-6 text-primary" />
@@ -160,7 +162,7 @@ const Index = () => {
 
 
       {/* How it works */}
-      <section className="container mx-auto px-4 py-12">
+      <section id="how" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className="text-right mb-8 max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-extrabold">كيف يعمل؟</h2>
           <p className="text-muted-foreground mt-2">ثلاث خطوات بسيطة تنظّم حضور محاضراتك</p>
@@ -169,7 +171,7 @@ const Index = () => {
           <div className="p-6 rounded-2xl border bg-card hover:shadow-elegant transition-all text-right">
             <div className="text-sm text-muted-foreground mb-2">الخطوة 1</div>
             <h4 className="font-bold mb-2 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary" /> أنشئ محاضرتك</h4>
-            <p className="text-muted-foreground">يقوم الأستاذ بإنشاء محاضرة وتوليد باركود خاص بها في ثوانٍ.</p>
+            <p className="text-muted-foreground">يقوم الأستاذ بإنشاء محاضرة وتوليد باركود خاص به في ثوانٍ.</p>
           </div>
           <div className="p-6 rounded-2xl border bg-card hover:shadow-elegant transition-all">
             <div className="text-sm text-muted-foreground mb-2">الخطوة 2</div>
@@ -225,7 +227,7 @@ const Index = () => {
       </section>
 
       {/* FAQ */}
-      <section className="container mx-auto px-4 py-12">
+      <section id="faq" className="container mx-auto px-4 py-12 scroll-mt-24 md:scroll-mt-28">
         <div className=" text-right mb-6 max-w-6xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-extrabold">الأسئلة الشائعة</h2>
         </div>

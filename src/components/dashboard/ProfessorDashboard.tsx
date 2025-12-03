@@ -41,7 +41,10 @@ const ProfessorDashboard = ({ userId }: ProfessorDashboardProps) => {
             </TabsContent>
 
             <TabsContent value="list">
-              <LecturesList userId={userId} refreshKey={refreshKey} />
+              <div className="flex justify-end">
+
+              <LecturesList userId={userId} refreshKey={refreshKey}  />
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

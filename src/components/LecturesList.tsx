@@ -4,9 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import AttendanceHistory from "@/components/AttendanceHistory";
 import QRCodeDisplay from "./QRCodeDisplay";
+import ProfessionalQRDisplay from "./ProfessionalQRDisplay";
+import AttendanceStats from "./AttendanceStats";
+import AttendanceRecord from "./AttendanceRecord";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { QrCode, Users, MapPin, Calendar, Download } from "lucide-react";
@@ -114,23 +118,53 @@ const LecturesList = ({ userId, refreshKey }: LecturesListProps) => {
       </div>
 
       <Dialog open={showQR} onOpenChange={setShowQR}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-center">
-              باركود المحاضرة
+              إدارة محاضرة: {selectedLecture?.title}
             </DialogTitle>
           </DialogHeader>
           {selectedLecture && (
-            <div className="space-y-4">
-              <div className="text-center space-y-2">
-                <h3 className="font-bold text-lg">{selectedLecture.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {selectedLecture.course_code}
-                </p>
-              </div>
-              <QRCodeDisplay baseData={selectedLecture.qr_code_data} refreshIntervalMs={5000} />
-              <QRCodeDisplay baseData={selectedLecture.qr_code_data} refreshIntervalMs={5000} />
-            </div>
+            <Tabs defaultValue="qr" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="qr" className="flex items-center gap-2">
+                  <QrCode className="w-4 h-4" />
+                  باركود المحاضرة
+                </TabsTrigger>
+                <TabsTrigger value="attendance" className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  سجل الحضور
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="qr" className="space-y-6">
+                <ProfessionalQRDisplay
+                  lectureId={selectedLecture.id}
+                  professorId={userId}
+                  title={selectedLecture.title}
+                  courseCode={selectedLecture.course_code}
+                  refreshIntervalMs={5000}
+                  onAttendanceUpdate={(count) => {
+                    // Optional: Update local state if needed
+                  }}
+                />
+                <AttendanceStats
+                  lectureId={selectedLecture.id}
+                  totalStudents={30} // This should come from your data
+                  isActive={selectedLecture.is_active}
+                />
+              </TabsContent>
+
+              <TabsContent value="attendance">
+                <AttendanceRecord
+                  lectureId={selectedLecture.id}
+                  professorId={userId}
+                  onAttendanceUpdate={(count) => {
+                    // Optional: Update local state if needed
+                  }}
+                />
+              </TabsContent>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>

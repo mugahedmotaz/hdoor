@@ -24,18 +24,28 @@ export const dataClient = {
 
   async signUp(email: string, password: string, full_name: string, university_id: string, role: AppRole) {
     if (USE_LOCAL) {
-      const { user } = LocalDB.signUp({ email, password, full_name, university_id, role });
-      return { data: { user }, error: null } as any;
+      try {
+        const { user } = LocalDB.signUp({ email, password, full_name, university_id, role });
+        return { data: { user }, error: null } as any;
+      } catch (error: any) {
+        console.error("LocalDB signUp error:", error);
+        return { data: { user: null }, error: { message: error.message } } as any;
+      }
     }
-    const res = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name, university_id }, emailRedirectTo: `${window.location.origin}/dashboard` },
-    });
-    if (res.data.user) {
-      await supabase.from("user_roles").insert({ user_id: res.data.user.id, role });
+    try {
+      const res = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name, university_id }, emailRedirectTo: `${window.location.origin}/dashboard` },
+      });
+      if (res.data.user) {
+        await supabase.from("user_roles").insert({ user_id: res.data.user.id, role });
+      }
+      return res;
+    } catch (error: any) {
+      console.error("Supabase signUp error:", error);
+      return { data: { user: null }, error: { message: error.message } } as any;
     }
-    return res;
   },
 
   async signOut() {
@@ -180,7 +190,7 @@ export const dataClient = {
   },
 
   // Attendance
-  async insertAttendance(input: { lecture_id: string; student_id: string; device_fingerprint: string; scanned_at?: string }) {
+  async insertAttendance(input: { lecture_id: string; student_id: string; professor_id: string; device_fingerprint: string; scanned_at?: string }) {
     if (USE_LOCAL) {
       return LocalDB.insertAttendance(input);
     }
@@ -217,5 +227,143 @@ export const dataClient = {
       .order("scanned_at", { ascending: false });
     if (error) throw error;
     return data || [];
+  },
+
+  async getAttendanceByLecture(lectureId: string) {
+    if (USE_LOCAL) {
+      return LocalDB.getAttendanceByLecture(lectureId);
+    }
+    const { data, error } = await supabase
+      .from("attendance")
+      .select("*, profiles!attendance_student_id_fkey ( full_name, university_id )")
+      .eq("lecture_id", lectureId)
+      .order("scanned_at", { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getAllStudents() {
+    if (USE_LOCAL) {
+      return LocalDB.getAllStudents();
+    }
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, university_id")
+      .eq("role", "student")
+      .order("full_name");
+    if (error) throw error;
+    return (data || []) as any[];
+  },
+
+  async getLectureById(lectureId: string) {
+    if (USE_LOCAL) {
+      return LocalDB.getLectureById(lectureId);
+    }
+    const { data, error } = await supabase
+      .from("lectures")
+      .select("*")
+      .eq("id", lectureId)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  // University management
+  async createUniversity(university: { id: string; name: string; admin_id: string; is_active: boolean }) {
+    if (USE_LOCAL) {
+      return LocalDB.createUniversity(university);
+    }
+    const { data, error } = await (supabase as any)
+      .from("universities")
+      .insert(university)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getAllProfessors() {
+    if (USE_LOCAL) {
+      return LocalDB.getAllProfessors();
+    }
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, university_id, email")
+      .eq("role", "professor")
+      .order("full_name");
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getAllLectures() {
+    if (USE_LOCAL) {
+      return LocalDB.getAllLectures();
+    }
+    const { data, error } = await supabase
+      .from("lectures")
+      .select("*")
+      .order("start_time", { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getAllAttendance() {
+    if (USE_LOCAL) {
+      return LocalDB.getAllAttendance();
+    }
+    const { data, error } = await supabase
+      .from("attendance")
+      .select("*")
+      .order("scanned_at", { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async resetUserPassword(userId: string, newPassword: string) {
+    if (USE_LOCAL) {
+      return LocalDB.resetUserPassword(userId, newPassword);
+    }
+    const { data, error } = await supabase.auth.admin.updateUserById(userId, {
+      password: newPassword,
+    });
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteUser(userId: string) {
+    if (USE_LOCAL) {
+      return LocalDB.deleteUser(userId);
+    }
+    const { error } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", userId);
+    if (error) throw error;
+    return true;
+  },
+
+  async getUniversityById(universityId: string) {
+    if (USE_LOCAL) {
+      return LocalDB.getUniversityById(universityId);
+    }
+    const { data, error } = await (supabase as any)
+      .from("universities")
+      .select("*")
+      .eq("id", universityId)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateUniversity(universityId: string, updates: { name: string }) {
+    if (USE_LOCAL) {
+      return LocalDB.updateUniversity(universityId, updates);
+    }
+    const { data, error } = await (supabase as any)
+      .from("universities")
+      .update(updates)
+      .eq("id", universityId)
+      .single();
+    if (error) throw error;
+    return data;
   },
 };

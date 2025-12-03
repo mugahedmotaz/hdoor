@@ -75,6 +75,7 @@ const CreateLecture = ({ userId, onLectureCreated }: CreateLectureProps) => {
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           required
           placeholder="مقدمة في البرمجة"
+          dir="rtl"
         />
       </div>
 
@@ -86,7 +87,7 @@ const CreateLecture = ({ userId, onLectureCreated }: CreateLectureProps) => {
           onChange={(e) => setFormData({ ...formData, courseCode: e.target.value })}
           required
           placeholder="CS101"
-          dir="ltr"
+         dir="rtl"
         />
       </div>
 
@@ -97,6 +98,7 @@ const CreateLecture = ({ userId, onLectureCreated }: CreateLectureProps) => {
           value={formData.location}
           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
           placeholder="قاعة 201"
+          dir="rtl"
         />
       </div>
 
