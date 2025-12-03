@@ -69,13 +69,17 @@ export default function UniversityRegister() {
 
        <div className="text-center">
         <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
-         <ArrowLeft className="w-4 h-4" />
-         العودة للصفحة الرئيسية
-        </Button>
        </div>
-      </div>
      )}
-    </CardContent>
+      </CardContent>
+   </Card>
+   <Card>
+    <div className="text-center p-4">
+     <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
+      <ArrowLeft className="w-4 h-4" />
+      العودة للصفحة الرئيسية
+     </Button>
+    </div>
    </Card>
   </div>
  );

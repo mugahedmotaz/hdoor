@@ -50,44 +50,38 @@ All colors MUST be HSL.
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 215 20% 95%;
     --sidebar-accent-foreground: 215 25% 15%;
-    --sidebar-border: 215 20% 90%;
+    --sidebar-border: 215 20% 85%;
     --sidebar-ring: 215 80% 25%;
   }
 
   .dark {
-    --background: 215 30% 8%;
-    --foreground: 0 0% 98%;
+    --background: 215 25% 15%;
+    --foreground: 210 20% 95%;
 
-    --card: 215 25% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 215 25% 20%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 215 25% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 215 25% 20%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 215 80% 55%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 215 80% 60%;
+    --primary-foreground: 215 25% 15%;
 
-    --secondary: 142 70% 50%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 142 70% 35%;
+    --secondary-foreground: 215 25% 15%;
 
-    --muted: 215 25% 15%;
+    --muted: 215 20% 30%;
     --muted-foreground: 215 15% 65%;
 
-    --accent: 25 90% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 25 90% 45%;
+    --accent-foreground: 215 25% 15%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 210 20% 95%;
 
-    --border: 215 25% 18%;
-    --input: 215 25% 18%;
-    --ring: 215 80% 55%;
-
-    --gradient-primary: linear-gradient(135deg, hsl(215 80% 55%), hsl(215 90% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(142 70% 50%), hsl(142 80% 60%));
-    --gradient-accent: linear-gradient(135deg, hsl(25 90% 60%), hsl(35 90% 65%));
-    --shadow-elegant: 0 10px 30px -10px hsl(215 80% 55% / 0.3);
-    --shadow-glow: 0 0 40px hsl(215 80% 65% / 0.2);
+    --border: 215 20% 40%;
+    --input: 215 20% 40%;
+    --ring: 215 80% 60%;
 
     --sidebar-background: 215 30% 8%;
     --sidebar-foreground: 0 0% 98%;
@@ -150,5 +144,86 @@ All colors MUST be HSL.
 
   :is(h1, h2, h3, h4) {
     line-height: 1.2;
+  }
+}
+
+/* Landing Page Animations */
+@layer utilities {
+  .anim-in {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  .anim-delay-1 {
+    animation-delay: 0.2s;
+  }
+
+  .anim-delay-2 {
+    animation-delay: 0.4s;
+  }
+
+  .anim-delay-3 {
+    animation-delay: 0.6s;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .floaty {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .floaty-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .floaty-slower {
+    animation: float 10s ease-in-out infinite;
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .hover-lift {
+    transition: all 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .shadow-elegant {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  .hero-gradient {
+    @apply bg-gradient-to-br from-primary/20 via-secondary/15 to-accent/10;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
 }

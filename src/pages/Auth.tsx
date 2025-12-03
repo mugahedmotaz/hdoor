@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { GraduationCap } from "lucide-react";
 import { Logo } from "@/components/ui/avatar";
-import { Mail, Lock, User, Eye, EyeOff, LogIn, UserPlus, AlertCircle } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, LogIn, UserPlus, AlertCircle, ArrowLeft } from "lucide-react";
+import Header from "@/components/Header";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -86,129 +87,138 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
-      <Card className="w-full max-w-md shadow-elegant">
-        <CardHeader className="text-center space-y-2">
-          {/* <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mb-2">
+    <div className="min-h-screen bg-background">
+      <Header showAuthButtons={false} />
+      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+        <Card className="w-full max-w-md shadow-elegant">
+          <CardHeader className="text-center space-y-2">
+            {/* <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mb-2">
             <GraduationCap className="w-8 h-8 text-primary-foreground" />
           </div> */}
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            {/* نظام الحضور الذكي */}
-          </CardTitle>
-          <Logo size="xl" className="m-auto" />
-          <CardDescription>تسجيل الطلاب فقط | الأساتذة يتم إضافتهم عبر إدارة الجامعة</CardDescription>
-        </CardHeader>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              {/* نظام الحضور الذكي */}
+            </CardTitle>
+            <Logo size="xl" className="m-auto" />
+            <CardDescription>تسجيل الطلاب فقط | الأساتذة يتم إضافتهم عبر إدارة الجامعة</CardDescription>
+          </CardHeader>
 
-        <CardContent>
-          <Tabs value={isLogin ? "login" : "signup"} onValueChange={(v) => setIsLogin(v === "login")}>
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">تسجيل الدخول</TabsTrigger>
-              <TabsTrigger value="signup">حساب جديد</TabsTrigger>
-            </TabsList>
+          <CardContent>
+            <Tabs value={isLogin ? "login" : "signup"} onValueChange={(v) => setIsLogin(v === "login")}>
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="login">تسجيل الدخول</TabsTrigger>
+                <TabsTrigger value="signup">حساب جديد</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email" className="float-right pb-4">البريد الإلكتروني</Label>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    className="text-right"
-                    placeholder="student@university.edu"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    dir="ltr"
-                  />
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="login-email" className="float-right pb-4">البريد الإلكتروني</Label>
+                    <Input
+                      id="login-email"
+                      type="email"
+                      className="text-right"
+                      placeholder="student@university.edu"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      dir="ltr"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="login-password" className="float-right pb-4">كلمة المرور</Label>
+                    <Input
+                      id="login-password"
+                      type="password"
+                      className="text-right"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      dir="ltr"
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "جاري التحميل..." : "دخول"}
+                  </Button>
+                </form>
+                <div className="text-center">
+                  <Button variant="link" onClick={() => navigate("/forgot-password")}>
+                    نسيت كلمة المرور؟
+                  </Button>
                 </div>
+              </TabsContent>
 
-                <div className="space-y-2">
-                  <Label htmlFor="login-password" className="float-right pb-4">كلمة المرور</Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    className="text-right"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    dir="ltr"
-                  />
-                </div>
+              <TabsContent value="signup">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullname" className="float-right pb-4">الاسم الكامل</Label>
+                    <Input
+                      className="text-right"
+                      id="fullname"
+                      type="text"
+                      placeholder="أحمد محمد"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                    />
+                  </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "جاري التحميل..." : "دخول"}
-                </Button>
-              </form>
-              <div className="text-center">
-                <Button variant="link" onClick={() => navigate("/forgot-password")}>
-                  نسيت كلمة المرور؟
-                </Button>
-              </div>
-            </TabsContent>
+                  <div className="space-y-2">
+                    <Label htmlFor="university-id" className="float-right pb-4">الرقم الجامعي</Label>
+                    <Input
+                      id="university-id"
+                      className="text-right"
+                      type="text"
+                      placeholder="202301234"
+                      value={universityId}
+                      onChange={(e) => setUniversityId(e.target.value)}
+                      required
+                      dir="ltr"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email" className="float-right pb-4">البريد الإلكتروني</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="student@university.edu"
+                      value={email}
+                      className="text-right"
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      dir="ltr"
+                    />
+                  </div>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullname" className="float-right pb-4">الاسم الكامل</Label>
-                  <Input
-                    className="text-right"
-                    id="fullname"
-                    type="text"
-                    placeholder="أحمد محمد"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="university-id" className="float-right pb-4">الرقم الجامعي</Label>
-                  <Input
-                    id="university-id"
-                    className="text-right"
-                    type="text"
-                    placeholder="202301234"
-                    value={universityId}
-                    onChange={(e) => setUniversityId(e.target.value)}
-                    required
-                    dir="ltr"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="float-right pb-4">البريد الإلكتروني</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="student@university.edu"
-                    value={email}
-                    className="text-right"
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    dir="ltr"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="float-right pb-4">كلمة المرور</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    className="text-right"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    dir="ltr"
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "جاري التسجيل..." : "إنشاء حساب طالب"}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password" className="float-right pb-4">كلمة المرور</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      className="text-right"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      dir="ltr"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "جاري التسجيل..." : "إنشاء حساب طالب"}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          <div className="text-center">
+            <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 my-4">
+              <ArrowLeft className="w-4 h-4" />
+              العودة للصفحة الرئيسية
+            </Button>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };

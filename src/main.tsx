@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Respect dir from index.html; only set lang if missing
 const htmlEl = document.documentElement;
@@ -13,4 +14,8 @@ if (!htmlEl.getAttribute("lang")) {
  htmlEl.setAttribute("lang", isArabic ? "ar" : "en");
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+ <ErrorBoundary>
+  <App />
+ </ErrorBoundary>
+);

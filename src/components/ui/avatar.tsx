@@ -2,6 +2,7 @@ import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/ThemeProvider";
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -55,11 +56,14 @@ const sizeMap: Record<LogoSize, string> = {
 };
 
 export function Logo({ className, textClassName, size = "md", showText = false }: LogoProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      {/* Place the logo file at public/logo-hdoor.png */}
+      {/* Use different logos for light and dark themes */}
       <img
-        src="/logo%20hdoor.png"
+        src={isDark ? "/logo-hdoor-dark.png" : "/logo%20hdoor.png"}
         alt="HDOOR Logo"
         className={cn("w-auto", sizeMap[size])}
         loading="eager"
