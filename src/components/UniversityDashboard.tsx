@@ -99,8 +99,8 @@ export default function UniversityDashboard({ universityId, adminId }: Universit
    </div>
 
    {/* Main Content */}
-   <Tabs defaultValue="professors" className="space-y-4">
-    <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2">
+   <Tabs defaultValue="professors" className="space-y-14 md:space-y-6 text-muted-foreground ">
+    <TabsList className="grid grid-cols-4 w-full grid-cols-2 md:grid-cols-4 gap-4">
      <TabsTrigger value="professors" className="flex items-center gap-2 text-sm">
       <Users className="w-4 h-4" />
       <span className="hidden sm:inline">الأساتذة</span>
