@@ -78,7 +78,7 @@ export default function UniversityLogin() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="admin@university.edu"
+          placeholder=""
           className="pr-10"
           dir="ltr"
           required
@@ -95,7 +95,7 @@ export default function UniversityLogin() {
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
+          placeholder=""
           className="pl-10"
           dir="ltr"
           required

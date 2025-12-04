@@ -400,9 +400,9 @@ const Index = () => {
         <div className="max-w-3xl m-auto  rounded-2xl border bg-card shadow-lg p-6 text-right">
           <h2 className="text-2xl font-extrabold mb-4">تواصل معنا</h2>
           <form className="grid gap-4 text-right">
-            <input className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="الاسم" required />
-            <input className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="البريد الإلكتروني" type="email" required />
-            <textarea className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" rows={4} placeholder="رسالتك" required />
+            <input className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="" required />
+            <input className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="" type="email" required />
+            <textarea className="rounded-md border bg-background p-3 transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" rows={4} placeholder="" required />
             <div className="flex justify-start">
               <Button className="gap-2 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl">إرسال</Button>
             </div>

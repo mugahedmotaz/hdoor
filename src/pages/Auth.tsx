@@ -117,7 +117,7 @@ const Auth = () => {
                       id="login-email"
                       type="email"
                       className="text-right"
-                      placeholder="student@university.edu"
+                      placeholder=""
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -157,7 +157,7 @@ const Auth = () => {
                       className="text-right"
                       id="fullname"
                       type="text"
-                      placeholder="أحمد محمد"
+                      placeholder=""
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       required
@@ -170,7 +170,7 @@ const Auth = () => {
                       id="university-id"
                       className="text-right"
                       type="text"
-                      placeholder="202301234"
+                      placeholder=""
                       value={universityId}
                       onChange={(e) => setUniversityId(e.target.value)}
                       required
@@ -182,7 +182,7 @@ const Auth = () => {
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder="student@university.edu"
+                      placeholder=""
                       value={email}
                       className="text-right"
                       onChange={(e) => setEmail(e.target.value)}
