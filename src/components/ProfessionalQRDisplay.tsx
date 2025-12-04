@@ -17,7 +17,6 @@ interface ProfessionalQRDisplayProps {
  courseCode: string;
  refreshIntervalMs?: number;
  size?: number;
- onAttendanceUpdate?: (count: number) => void;
 }
 
 export default function ProfessionalQRDisplay({
@@ -28,17 +27,14 @@ export default function ProfessionalQRDisplay({
  courseCode,
  refreshIntervalMs = 5000,
  size = 320,
- onAttendanceUpdate,
 }: ProfessionalQRDisplayProps) {
  const { toast } = useToast();
  const [qrUrl, setQrUrl] = useState<string>("");
  const [timeLeft, setTimeLeft] = useState<number>(Math.ceil(refreshIntervalMs / 1000));
- const [attendanceCount, setAttendanceCount] = useState<number>(0);
  const [isActive, setIsActive] = useState<boolean>(true);
  const [secretKey, setSecretKey] = useState<string>("");
  const intervalRef = useRef<number | null>(null);
  const countdownRef = useRef<number | null>(null);
- const attendanceIntervalRef = useRef<number | null>(null);
 
  // Initialize secret key
  useEffect(() => {
@@ -70,22 +66,8 @@ export default function ProfessionalQRDisplay({
   }
  };
 
- // Fetch attendance count
- const fetchAttendanceCount = async () => {
-  try {
-   // Real implementation - fetch from database
-   const attendance = await dataClient.getAttendanceByLecture(lectureId);
-   const count = attendance?.length || 0;
-   setAttendanceCount(count);
-   onAttendanceUpdate?.(count);
-  } catch (e) {
-   console.error("Failed to fetch attendance", e);
-   setAttendanceCount(0);
-   onAttendanceUpdate?.(0);
-  }
- };
 
- // Start rotation and attendance polling
+ // Start rotation
  useEffect(() => {
   generateSecureQR();
   if (intervalRef.current) window.clearInterval(intervalRef.current);
@@ -96,14 +78,9 @@ export default function ProfessionalQRDisplay({
    setTimeLeft((t) => (t <= 1 ? Math.ceil(refreshIntervalMs / 1000) : t - 1));
   }, 1000);
 
-  fetchAttendanceCount();
-  if (attendanceIntervalRef.current) window.clearInterval(attendanceIntervalRef.current);
-  attendanceIntervalRef.current = window.setInterval(fetchAttendanceCount, 3000);
-
   return () => {
    if (intervalRef.current) window.clearInterval(intervalRef.current);
    if (countdownRef.current) window.clearInterval(countdownRef.current);
-   if (attendanceIntervalRef.current) window.clearInterval(attendanceIntervalRef.current);
   };
  }, [secretKey, refreshIntervalMs]);
 
@@ -147,16 +124,6 @@ export default function ProfessionalQRDisplay({
      <Progress value={progressPercent} className="h-1.5" />
     </div>
 
-    {/* Attendance Stats */}
-    <div className="bg-muted/50 rounded-lg p-2">
-     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-1">
-       <Users className="w-3 h-3 text-primary" />
-       <span className="text-xs font-medium">الحضور الحالي</span>
-      </div>
-      <span className="text-base font-bold text-primary">{attendanceCount}</span>
-     </div>
-    </div>
 
     {/* Security Note */}
     <div className="text-xs text-center text-muted-foreground">

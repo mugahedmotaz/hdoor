@@ -31,7 +31,9 @@ export default function AttendanceRecord({
   const fetchAttendance = async () => {
     try {
       setLoading(true);
+      // Get university ID from lecture or context
       const attendance = await dataClient.getAttendanceByLecture(lectureId);
+      console.log('Fetched attendance:', attendance); // Debug log
       setAttendanceList(attendance || []);
       onAttendanceUpdate?.(attendance?.length || 0);
     } catch (error) {
@@ -86,8 +88,9 @@ export default function AttendanceRecord({
       await dataClient.insertAttendance({
         lecture_id: lectureId,
         student_id: student.id,
-        professor_id: "", // Manual entry doesn't have professor context
+        professor_id: professorId || "", // Use professorId if available
         device_fingerprint: "manual_entry",
+        scanned_at: new Date().toISOString(), // Add timestamp
       });
 
       toast({
@@ -97,7 +100,11 @@ export default function AttendanceRecord({
 
       setManualCode("");
       setShowManualEntry(false);
-      fetchAttendance(); // Refresh list
+
+      // Force refresh attendance list
+      setTimeout(() => {
+        fetchAttendance();
+      }, 100);
     } catch (error) {
       console.error("Error recording manual attendance:", error);
       toast({
@@ -122,7 +129,14 @@ export default function AttendanceRecord({
 
   useEffect(() => {
     fetchAttendance();
-  }, [lectureId]);
+
+    // Set up real-time updates
+    const interval = setInterval(() => {
+      fetchAttendance();
+    }, 2000); // Refresh every 2 seconds
+
+    return () => clearInterval(interval);
+  }, [lectureId, professorId]);
 
   return (
     <Card className="w-full max-w-2xl mx-auto">

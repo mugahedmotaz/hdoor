@@ -52,6 +52,10 @@ export interface LocalDBShape {
   attendance: AttendanceRecord[];
   profiles: Array<{ id: string; full_name: string; university_id: string; created_at: string }>;
   universities: any[];
+  notifications?: any[];
+  analytics?: any[];
+  security_logs?: any[];
+  backups?: any[];
 }
 
 const STORAGE_KEY = "ATTENDANCE_APP_DB";
@@ -101,67 +105,19 @@ function saveDB(db: LocalDBShape) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
 }
 
-function seedDB(): LocalDBShape {
-  const now = new Date().toISOString();
-
-  // Demo professor and student
-  const demoProfessor: LocalUser = {
-    id: "prof_demo",
-    email: "prof@demo.com",
-    password: "password123",
-    full_name: "أستاذ تجريبي",
-    university_id: "PROF001",
-    role: "professor",
-    created_at: now,
-  };
-
-  const demoStudent: LocalUser = {
-    id: "student_demo",
-    email: "student@demo.com",
-    password: "password123",
-    full_name: "طالب تجريبي",
-    university_id: "STU001",
-    role: "student",
-    created_at: now,
-  };
-
-  const demoLecture: Lecture = {
-    id: "lecture_demo",
-    professor_id: "prof_demo",
-    title: "محاضرة تجريبية",
-    course_code: "DEMO101",
-    location: "قاعة 101",
-    start_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    end_time: new Date(Date.now() + 25 * 60 * 60 * 1000).toISOString(),
-    qr_code_data: "DEMO_QR",
-    is_active: true,
-    created_at: now,
-  };
-
-  const initial: LocalDBShape = {
-    users: [demoProfessor, demoStudent],
+function initializeDB(): LocalDBShape {
+  return {
+    users: [],
     device_bindings: [],
-    lectures: [demoLecture],
+    lectures: [],
     attendance: [],
-    profiles: [
-      {
-        id: "prof_demo",
-        full_name: "أستاذ تجريبي",
-        university_id: "PROF001",
-        created_at: now,
-      },
-      {
-        id: "student_demo",
-        full_name: "طالب تجريبي",
-        university_id: "STU001",
-        created_at: now,
-      },
-    ],
+    profiles: [],
     universities: [],
+    notifications: [],
+    analytics: [],
+    security_logs: [],
+    backups: [],
   };
-
-  saveDB(initial);
-  return initial;
 }
 
 export const LocalDB = {
@@ -439,5 +395,75 @@ export const LocalDB = {
     db.universities[index] = { ...db.universities[index], ...updates };
     saveDB(db);
     return db.universities[index];
+  },
+
+  getNotifications(userId: string) {
+    const db = loadDB();
+    return db.notifications?.filter(n => n.user_id === userId) || [];
+  },
+
+  createNotification(notification: any) {
+    const db = loadDB();
+    db.notifications = db.notifications || [];
+    const newNotification = {
+      ...notification,
+      id: `notif_${Date.now()}`,
+      created_at: new Date().toISOString(),
+    };
+    db.notifications.push(newNotification);
+    saveDB(db);
+    return newNotification;
+  },
+
+  markNotificationAsRead(notificationId: string) {
+    const db = loadDB();
+    const notification = db.notifications?.find(n => n.id === notificationId);
+    if (notification) {
+      notification.read = true;
+      saveDB(db);
+    }
+    return notification;
+  },
+
+  getUniversityAnalytics(universityId: string) {
+    const db = loadDB();
+    return db.analytics?.filter(a => a.university_id === universityId) || [];
+  },
+
+  logSecurityEvent(event: any) {
+    const db = loadDB();
+    db.security_logs = db.security_logs || [];
+    const logEntry = {
+      ...event,
+      id: `sec_${Date.now()}`,
+      created_at: new Date().toISOString(),
+    };
+    db.security_logs.push(logEntry);
+    saveDB(db);
+    return logEntry;
+  },
+
+  createBackup(universityId: string) {
+    const db = loadDB();
+    db.backups = db.backups || [];
+    const backup = {
+      backup_id: `backup_${Date.now()}`,
+      university_id: universityId,
+      created_at: new Date().toISOString(),
+      status: 'completed'
+    };
+    db.backups.push(backup);
+    saveDB(db);
+    return backup;
+  },
+
+  generateAttendanceReport(lectureId: string, format: 'pdf' | 'excel') {
+    const db = loadDB();
+    const attendance = db.attendance?.filter(a => a.lecture_id === lectureId) || [];
+    return {
+      data: attendance,
+      format,
+      generated_at: new Date().toISOString()
+    };
   },
 };

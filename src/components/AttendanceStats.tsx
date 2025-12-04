@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Users, Clock, TrendingUp, AlertTriangle } from "lucide-react";
+import { dataClient } from "@/lib/dataClient";
 
 interface AttendanceStatsProps {
  lectureId: string;
@@ -13,33 +14,27 @@ interface AttendanceStatsProps {
 interface AttendanceRecord {
  student_id: string;
  scanned_at: string;
- student_name?: string;
- university_id?: string;
+ profiles?: {
+  full_name: string;
+  university_id: string;
+ };
 }
 
 export default function AttendanceStats({ lectureId, totalStudents = 0, isActive = false }: AttendanceStatsProps) {
  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
  const [loading, setLoading] = useState(true);
 
- // Mock data fetching - replace with real API call
+ // Real data fetching from database
  useEffect(() => {
   const fetchAttendance = async () => {
    setLoading(true);
    try {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Mock data - in production, fetch from your backend
-    const mockAttendance: AttendanceRecord[] = Array.from({ length: Math.floor(Math.random() * 20) + 5 }, (_, i) => ({
-     student_id: `student_${i + 1}`,
-     scanned_at: new Date(Date.now() - Math.random() * 3600000).toISOString(),
-     student_name: `طالب ${i + 1}`,
-     university_id: `S2023${String(i + 1).padStart(4, '0')}`,
-    }));
-
-    setAttendance(mockAttendance);
+    const attendanceData = await dataClient.getAttendanceByLecture(lectureId);
+    console.log('AttendanceStats - Fetched attendance:', attendanceData); // Debug log
+    setAttendance(attendanceData || []);
    } catch (error) {
     console.error('Failed to fetch attendance:', error);
+    setAttendance([]);
    } finally {
     setLoading(false);
    }
@@ -50,7 +45,7 @@ export default function AttendanceStats({ lectureId, totalStudents = 0, isActive
   // Set up real-time updates if lecture is active
   let interval: number;
   if (isActive) {
-   interval = window.setInterval(fetchAttendance, 5000);
+   interval = window.setInterval(fetchAttendance, 3000); // Update every 3 seconds
   }
 
   return () => {

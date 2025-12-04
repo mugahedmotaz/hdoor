@@ -141,18 +141,20 @@ const LecturesList = ({ userId, refreshKey }: LecturesListProps) => {
                 <ProfessionalQRDisplay
                   lectureId={selectedLecture.id}
                   professorId={userId}
+                  universityId={selectedLecture.university_id || ""}
                   title={selectedLecture.title}
                   courseCode={selectedLecture.course_code}
                   refreshIntervalMs={5000}
-                  onAttendanceUpdate={(count) => {
-                    // Optional: Update local state if needed
-                  }}
                 />
-                <AttendanceStats
-                  lectureId={selectedLecture.id}
-                  totalStudents={30} // This should come from your data
-                  isActive={selectedLecture.is_active}
-                />
+
+                {/* Attendance Stats Section */}
+                <div className="mt-6">
+                  <AttendanceStats
+                    lectureId={selectedLecture.id}
+                    totalStudents={30}
+                    isActive={selectedLecture.is_active}
+                  />
+                </div>
               </TabsContent>
 
               <TabsContent value="attendance">

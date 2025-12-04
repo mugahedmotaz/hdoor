@@ -32,9 +32,7 @@ export default function UniversityRegister() {
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
             <Building2 className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            تسجيل جامعة جديدة
-          </CardTitle>
+
           <Logo size="xl" className="m-auto" />
           <CardDescription>
             أنشئ حساب جامعة وابدأ في إدارة نظام الحضور
@@ -44,7 +42,7 @@ export default function UniversityRegister() {
         <CardContent>
           {universityCreated ? (
             <div className="text-center space-y-4 py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
                 <Building2 className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-green-600">
@@ -77,14 +75,7 @@ export default function UniversityRegister() {
           )}
         </CardContent>
       </Card>
-      <Card>
-        <div className="text-center p-4">
-          <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            العودة للصفحة الرئيسية
-          </Button>
-        </div>
-      </Card>
+
     </div>
   );
 }
