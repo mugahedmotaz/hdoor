@@ -8,6 +8,7 @@ import ProfessorDashboard from "@/components/dashboard/ProfessorDashboard";
 import UniversityDashboard from "@/components/UniversityDashboard";
 import { LogOut, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/avatar";
+import type { AppRole } from "@/lib/localDB";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -32,8 +33,17 @@ const Dashboard = () => {
       setUserId(session.user.id);
 
       // Get user role (supports both local and supabase)
-      const role = await dataClient.getUserRoleAsync(session.user.id);
-      if (!role) throw new Error("تعذر تحديد دور المستخدم");
+      let role = await dataClient.getUserRoleAsync(session.user.id);
+
+      // إذا لم يكن للمستخدم دور (مثلاً بعد تسجيل الدخول بجوجل لأول مرة)
+      // نستخدم تلميح الدور من localStorage لتعيين دور مناسب
+      if (!role) {
+        const hintRaw = window.localStorage.getItem("hdoor_google_role_hint") as AppRole | null;
+        const defaultRole: AppRole = hintRaw === "admin" || hintRaw === "professor" ? hintRaw : "student";
+        role = await dataClient.ensureUserRole(session.user.id, defaultRole);
+        window.localStorage.removeItem("hdoor_google_role_hint");
+      }
+
       setUserRole(role);
     } catch (error: any) {
       console.error("Error checking user:", error);

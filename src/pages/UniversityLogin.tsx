@@ -52,6 +52,33 @@ export default function UniversityLogin() {
   }
  };
 
+ const handleGoogleLogin = async () => {
+  setLoading(true);
+  try {
+   // تلميح بأن تسجيل الدخول بجوجل من سياق مدير جامعة
+   window.localStorage.setItem("hdoor_google_role_hint", "admin");
+   const { error } = await dataClient.signInWithGoogle();
+
+   if (error) {
+    toast({
+     variant: "destructive",
+     title: "خطأ في تسجيل الدخول بجوجل",
+     description: error.message || "تعذر إكمال تسجيل الدخول عبر Google",
+    });
+    return;
+   }
+   // Supabase سيعيد التوجيه بعد نجاح OAuth حسب redirectTo
+  } catch (error: any) {
+   toast({
+    variant: "destructive",
+    title: "خطأ في تسجيل الدخول بجوجل",
+    description: error.message || "تعذر إكمال تسجيل الدخول عبر Google",
+   });
+  } finally {
+   setLoading(false);
+  }
+ };
+
  return (
   <div className="min-h-screen bg-background">
    <Header showAuthButtons={false} />
@@ -128,6 +155,21 @@ export default function UniversityLogin() {
           تسجيل الدخول
          </>
         )}
+       </Button>
+
+       <div className="relative py-2 text-center text-xs text-muted-foreground">
+        <span className="bg-background px-2 relative z-10">أو</span>
+        <div className="absolute inset-x-0 top-1/2 h-px bg-border" aria-hidden="true" />
+       </div>
+
+       <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={handleGoogleLogin}
+        disabled={loading}
+       >
+        تسجيل الدخول بواسطة Google
        </Button>
       </form>
 

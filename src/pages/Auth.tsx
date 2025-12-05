@@ -47,7 +47,14 @@ const Auth = () => {
         role
       );
 
-      if (error) throw error;
+      if (error) {
+        // معالجة خاصة لحالة البريد المسجّل مسبقاً
+        const msg = (error as any).message?.toString().toLowerCase() ?? "";
+        if (msg.includes("user already registered") || msg.includes("already registered")) {
+          throw new Error("هذا البريد الإلكتروني مسجّل بالفعل. يرجى استخدام بريد آخر أو تسجيل الدخول بهذا البريد.");
+        }
+        throw error;
+      }
 
       if (data?.user) {
         toast({
@@ -60,7 +67,26 @@ const Auth = () => {
       toast({
         variant: "destructive",
         title: "خطأ في التسجيل",
-        description: error.message,
+        description: error.message || "تعذر إكمال عملية التسجيل. حاول ببريد مختلف أو قم بتسجيل الدخول.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      // تلميح بأن تسجيل الدخول بجوجل من سياق الطلاب
+      window.localStorage.setItem("hdoor_google_role_hint", "student");
+      const { error } = await dataClient.signInWithGoogle();
+      if (error) throw error;
+      // Supabase سيعيد التوجيه بعد نجاح OAuth حسب redirectTo
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "خطأ في تسجيل الدخول بجوجل",
+        description: error.message ?? "تعذر إكمال تسجيل الدخول عبر Google",
       });
     } finally {
       setLoading(false);
@@ -141,6 +167,21 @@ const Auth = () => {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "جاري التحميل..." : "دخول"}
                   </Button>
+
+                  <div className="relative py-2 text-center text-xs text-muted-foreground">
+                    <span className="bg-background px-2 relative z-10">أو</span>
+                    <div className="absolute inset-x-0 top-1/2 h-px bg-border" aria-hidden="true" />
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                  >
+                    تسجيل الدخول بواسطة Google
+                  </Button>
                 </form>
                 <div className="text-center">
                   <Button variant="link" onClick={() => navigate("/forgot-password")}>
@@ -152,39 +193,12 @@ const Auth = () => {
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullname" className="float-right pb-4">الاسم الكامل</Label>
-                    <Input
-                      className="text-right"
-                      id="fullname"
-                      type="text"
-                      placeholder=""
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="university-id" className="float-right pb-4">الرقم الجامعي</Label>
-                    <Input
-                      id="university-id"
-                      className="text-right"
-                      type="text"
-                      placeholder=""
-                      value={universityId}
-                      onChange={(e) => setUniversityId(e.target.value)}
-                      required
-                      dir="ltr"
-                    />
-                  </div>
-                  <div className="space-y-2">
                     <Label htmlFor="signup-email" className="float-right pb-4">البريد الإلكتروني</Label>
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder=""
-                      value={email}
                       className="text-right"
+                      value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       dir="ltr"
@@ -204,8 +218,24 @@ const Auth = () => {
                       dir="ltr"
                     />
                   </div>
+
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "جاري التسجيل..." : "إنشاء حساب طالب"}
+                  </Button>
+
+                  <div className="relative py-2 text-center text-xs text-muted-foreground">
+                    <span className="bg-background px-2 relative z-10">أو</span>
+                    <div className="absolute inset-x-0 top-1/2 h-px bg-border" aria-hidden="true" />
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                  >
+                    إنشاء / تسجيل حساب طالب بواسطة Google
                   </Button>
                 </form>
               </TabsContent>

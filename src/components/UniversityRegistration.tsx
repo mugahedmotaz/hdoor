@@ -15,17 +15,42 @@ export default function UniversityRegistration({ onUniversityCreated }: Universi
  const { toast } = useToast();
  const [loading, setLoading] = useState(false);
  const [formData, setFormData] = useState({
-  universityName: "",
   adminEmail: "",
   adminPassword: "",
  });
+
+ const handleGoogleSignIn = async () => {
+  setLoading(true);
+  try {
+   // تلميح بأن تسجيل الدخول بجوجل من سياق مدير جامعة
+   window.localStorage.setItem("hdoor_google_role_hint", "admin");
+   const { error } = await dataClient.signInWithGoogle();
+   if (error) {
+    toast({
+     variant: "destructive",
+     title: "خطأ في تسجيل الدخول بجوجل",
+     description: error.message || "تعذر إكمال تسجيل الدخول عبر Google",
+    });
+    return;
+   }
+   // إعادة التوجيه سيتم عبر Supabase بعد نجاح OAuth
+  } catch (error: any) {
+   toast({
+    variant: "destructive",
+    title: "خطأ في تسجيل الدخول بجوجل",
+    description: error.message || "تعذر إكمال تسجيل الدخول عبر Google",
+   });
+  } finally {
+   setLoading(false);
+  }
+ };
 
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setLoading(true);
 
   try {
-   // Create university admin account with minimal info
+   // إنشاء حساب مدير جامعة باستخدام Supabase Auth
    const result = await dataClient.signUp(
     formData.adminEmail,
     formData.adminPassword,
@@ -36,6 +61,10 @@ export default function UniversityRegistration({ onUniversityCreated }: Universi
 
    if (result.error) {
     console.error("SignUp error:", result.error);
+    const raw = (result.error as any).message?.toString().toLowerCase() ?? "";
+    if (raw.includes("user already registered") || raw.includes("already registered")) {
+     throw new Error("هذا البريد مسجّل لحساب موجود. إذا كنت مدير جامعة، استخدم صفحة تسجيل الدخول، وإلا فاستخدم بريداً آخر.");
+    }
     throw new Error(result.error.message || "فشل في إنشاء حساب المدير");
    }
 
@@ -45,10 +74,14 @@ export default function UniversityRegistration({ onUniversityCreated }: Universi
 
    const user = result.data.user;
 
-   // Create university record
+   // إنشاء سجل جامعة افتراضي مرتبط بالمدير الجديد
+   // الاسم يتم توليده تلقائياً ويمكن تعديله لاحقاً من صفحة الإعدادات
+   const emailDomain = formData.adminEmail.split("@")[1] || "university";
+   const autoName = `جامعة ${emailDomain.split(".")[0]}`;
+
    await dataClient.createUniversity({
     id: user.id,
-    name: formData.universityName,
+    name: autoName,
     admin_id: user.id,
     is_active: true,
    });
@@ -85,25 +118,12 @@ export default function UniversityRegistration({ onUniversityCreated }: Universi
    <CardContent>
     <form onSubmit={handleSubmit} className="space-y-4">
      <div className="space-y-2">
-      <Label htmlFor="universityName">اسم الجامعة</Label>
-      <Input
-       id="universityName"
-       value={formData.universityName}
-       onChange={(e) => setFormData({ ...formData, universityName: e.target.value })}
-       placeholder="جامعة المملكة"
-       required
-       dir="rtl"
-      />
-     </div>
-
-     <div className="space-y-2">
       <Label htmlFor="adminEmail">البريد الإلكتروني</Label>
       <Input
        id="adminEmail"
        type="email"
        value={formData.adminEmail}
        onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
-       placeholder="admin@university.edu"
        required
        dir="ltr"
       />
@@ -116,7 +136,6 @@ export default function UniversityRegistration({ onUniversityCreated }: Universi
        type="password"
        value={formData.adminPassword}
        onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
-       placeholder="••••••••"
        required
        minLength={6}
       />
@@ -124,6 +143,21 @@ export default function UniversityRegistration({ onUniversityCreated }: Universi
 
      <Button type="submit" className="w-full" disabled={loading}>
       {loading ? "جاري الإنشاء..." : "إنشاء جامعة"}
+     </Button>
+
+     <div className="relative py-2 text-center text-xs text-muted-foreground">
+      <span className="bg-background px-2 relative z-10">أو</span>
+      <div className="absolute inset-x-0 top-1/2 h-px bg-border" aria-hidden="true" />
+     </div>
+
+     <Button
+      type="button"
+      variant="outline"
+      className="w-full"
+      onClick={handleGoogleSignIn}
+      disabled={loading}
+     >
+      تسجيل / تسجيل دخول مدير جامعة بواسطة Google
      </Button>
     </form>
 

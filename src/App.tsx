@@ -12,6 +12,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPasswordComplete = lazy(() => import("./pages/ResetPasswordComplete"));
 const UniversityLogin = lazy(() => import("./pages/UniversityLogin"));
 const UniversityRegister = lazy(() => import("./pages/UniversityRegister"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><Index /></Suspense></ErrorBoundary>} />
               <Route path="/auth" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><Auth /></Suspense></ErrorBoundary>} />
               <Route path="/forgot-password" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><ForgotPassword /></Suspense></ErrorBoundary>} />
+              <Route path="/reset-password-complete" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><ResetPasswordComplete /></Suspense></ErrorBoundary>} />
               <Route path="/university-login" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><UniversityLogin /></Suspense></ErrorBoundary>} />
               <Route path="/university-register" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><UniversityRegister /></Suspense></ErrorBoundary>} />
               <Route path="/dashboard" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><Dashboard /></Suspense></ErrorBoundary>} />

@@ -43,6 +43,21 @@ export const dataClient = {
     return await supabase.auth.signInWithPassword({ email, password });
   },
 
+  async signInWithGoogle() {
+    if (USE_LOCAL) {
+      return { data: { user: null }, error: { message: "Google sign-in is not available in local mode" } } as any;
+    }
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    return { data, error } as any;
+  },
+
   async signUp(email: string, password: string, full_name: string, university_id: string, role: AppRole) {
     if (USE_LOCAL) {
       try {
@@ -96,6 +111,36 @@ export const dataClient = {
       .maybeSingle();
     if (error) return null;
     return (data?.role as AppRole) ?? null;
+  },
+
+  async ensureUserRole(userId: string, defaultRole: AppRole): Promise<AppRole> {
+    if (USE_LOCAL) {
+      // في الوضع المحلي، نعتمد على LocalDB فقط
+      const existing = LocalDB.getUserRole(userId);
+      return existing ?? defaultRole;
+    }
+
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (!error && data?.role) {
+      return data.role as AppRole;
+    }
+
+    // إذا لم يوجد دور، ننشئ واحداً افتراضياً
+    const { error: insertError } = await supabase
+      .from("user_roles")
+      .insert({ user_id: userId, role: defaultRole });
+
+    if (insertError) {
+      console.error("ensureUserRole insert error", insertError);
+      return defaultRole;
+    }
+
+    return defaultRole;
   },
 
   // Device bindings
