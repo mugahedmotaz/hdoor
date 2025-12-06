@@ -75,7 +75,19 @@ export const dataClient = {
         options: { data: { full_name, university_id }, emailRedirectTo: `${window.location.origin}/dashboard` },
       });
       if (res.data.user) {
-        await supabase.from("user_roles").insert({ user_id: res.data.user.id, role });
+        // سجل الدور (للتوافق مع المنطق القديم إن وُجد جدول user_roles)
+        try { await supabase.from("user_roles").insert({ user_id: res.data.user.id, role }); } catch (_) { }
+
+        // أنشئ سجل profile متوافق مع المخطط الحالي
+        const safeName = (full_name ?? "").toString();
+        const profileInsert = {
+          id: res.data.user.id,
+          full_name: safeName.length > 0 ? safeName : (email.split("@")[0] || ""),
+          university_id: university_id || null,
+          role,
+          department: null as any,
+        } as any;
+        try { await (supabase as any).from("profiles").insert(profileInsert); } catch (e) { console.warn("profiles insert failed", e); }
       }
       return res;
     } catch (error: any) {
@@ -347,15 +359,20 @@ export const dataClient = {
     return data;
   },
 
-  async getAllProfessors() {
+  async getAllProfessors(universityId?: string) {
     if (USE_LOCAL) {
       return LocalDB.getAllProfessors();
     }
-    const { data, error } = await supabase
+    let query = (supabase as any)
       .from("profiles")
-      .select("id, full_name, university_id, email")
-      .eq("role", "professor")
-      .order("full_name");
+      .select("id, full_name, university_id, role")
+      .eq("role", "professor") as any;
+
+    if (universityId) {
+      query = query.eq("university_id", universityId);
+    }
+
+    const { data, error } = await query.order("full_name");
     if (error) throw error;
     return data || [];
   },
@@ -393,6 +410,17 @@ export const dataClient = {
     });
     if (error) throw error;
     return data;
+  },
+
+  async sendPasswordResetEmail(email: string) {
+    if (USE_LOCAL) {
+      // no-op in local
+      return { ok: true } as const;
+    }
+    const redirect = `https://hdoor-eight.vercel.app/reset-password-complete`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: redirect });
+    if (error) throw error;
+    return { ok: true } as const;
   },
 
   async deleteUser(userId: string) {
